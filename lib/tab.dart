@@ -10,6 +10,11 @@ class TabPage extends StatefulWidget {
 }
 
 class _TabPageState extends State<TabPage> {
+  // background color
+  Color _bgcolor = const Color(0xFF504f4b);
+  Color _highlight = const Color(0xFFfff2cc);
+  Color _btncolor = const Color(0xFF353430);
+
   int _selectedIndex = 0;
 
   List _pages = [
@@ -27,6 +32,7 @@ class _TabPageState extends State<TabPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _bgcolor,
       body: SafeArea(
         child: Center(child: _pages[_selectedIndex]),
       ),

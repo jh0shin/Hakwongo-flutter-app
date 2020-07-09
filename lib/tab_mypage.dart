@@ -32,7 +32,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
       onWillPop: _onBackPressed,
       child: Center(
         child: Text(
-            "탭 - 마이페이지"
+            "탭 - 마이페이지",
+          style: TextStyle(color: Colors.white),
         ),
       ),
     );

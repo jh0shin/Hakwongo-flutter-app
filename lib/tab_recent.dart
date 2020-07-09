@@ -32,7 +32,8 @@ class _RecentPageState extends State<RecentPage> {
       onWillPop: _onBackPressed,
       child: Center(
         child: Text(
-            "탭 - 최근 검색 페이지"
+          "탭 - 최근 검색 페이지",
+          style: TextStyle(color: Colors.white),
         ),
       ),
     );

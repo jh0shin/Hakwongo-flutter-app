@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:hwgo/settings.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'bloc/userbloc.dart';
+
+import 'package:hwgo/search.dart';
 
 class TabMainPage extends StatefulWidget {
   @override
@@ -7,11 +13,6 @@ class TabMainPage extends StatefulWidget {
 }
 
 class _TabMainPageState extends State<TabMainPage> {
-
-  // background color
-  Color _bgcolor = const Color(0xFF504f4b);
-  Color _highlight = const Color(0xFFfff2cc);
-  Color _btncolor = const Color(0xFF353430);
 
   // page index
   // state : 'initState', 'searchResult'
@@ -133,7 +134,7 @@ class _TabMainPageState extends State<TabMainPage> {
                                 width: screenWidth,
                                 height: screenWidth * 0.15,
                                 child: Container(
-                                    color: _bgcolor,
+                                    color: bgcolor,
                                     child: Center(
                                       child: Text("지역선택",
                                           style: TextStyle(
@@ -260,7 +261,7 @@ class _TabMainPageState extends State<TabMainPage> {
                                             width: screenWidth * 0.25,
                                             height: screenWidth * 0.15,
                                             color: _sido[_sido.keys.toList()[i]] == _selectedSido
-                                                ? _highlight
+                                                ? highlightcolor
                                                 : Colors.white,
                                             child: Center(
                                                 child: Text(
@@ -280,7 +281,7 @@ class _TabMainPageState extends State<TabMainPage> {
                                           width: screenWidth * 0.25,
                                           height: screenWidth * 0.15,
                                           color: _sido[_sido.keys.toList()[i]] == _selectedSido
-                                              ? _highlight
+                                              ? highlightcolor
                                               : Colors.white,
                                           child: Center(
                                               child: Text(
@@ -339,7 +340,7 @@ class _TabMainPageState extends State<TabMainPage> {
                                             width: screenWidth * 0.45,
                                             height: screenWidth * 0.15,
                                             color: _gungu[_selectedSido][i] == _selectedGungu
-                                                ? _highlight
+                                                ? highlightcolor
                                                 : Colors.white,
                                             child: Center(
                                                 child: Text(
@@ -359,7 +360,7 @@ class _TabMainPageState extends State<TabMainPage> {
                                           width: screenWidth * 0.45,
                                           height: screenWidth * 0.15,
                                           color: _gungu[_selectedSido][i] == _selectedGungu
-                                              ? _highlight
+                                              ? highlightcolor
                                               : Colors.white,
                                           child: Center(
                                               child: Text(
@@ -416,7 +417,7 @@ class _TabMainPageState extends State<TabMainPage> {
                                           width: screenWidth * 0.3,
                                           height: screenWidth * 0.15,
                                           color: _dong[_selectedGungu][i] == _selectedDong
-                                              ? _highlight
+                                              ? highlightcolor
                                               : Colors.white,
                                           child: Center(
                                               child: Text(
@@ -444,7 +445,7 @@ class _TabMainPageState extends State<TabMainPage> {
                             height: screenWidth * 0.1,
                             child: Container(
                               alignment: Alignment.centerLeft,
-                              color: _highlight,
+                              color: highlightcolor,
                               child: Text(
                                   '       X  ' + _selectedSido + ' ' + _selectedGungu + ' ' + _selectedDong,
                                   style: TextStyle(
@@ -509,108 +510,110 @@ class _TabMainPageState extends State<TabMainPage> {
     );
   }
 
-  Widget build(BuildContext context) {
-    // screen width
-    double screenWidth = MediaQuery.of(context).size.width;
+  @override
+  Widget build(BuildContext context) => BlocBuilder<UserBloc, UserState>(
+    builder: (context, state) {
+      // screen width
+      double screenWidth = MediaQuery.of(context).size.width;
 
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Container(
-        decoration: BoxDecoration(color: _bgcolor),
-        child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                // Scrollable screen
-                Flexible(
-                    flex: 1,
-                    child: ListView(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      children: <Widget>[
+      return WillPopScope(
+        onWillPop: _onBackPressed,
+        child: Container(
+          decoration: BoxDecoration(color: bgcolor),
+          child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  // Scrollable screen
+                  Flexible(
+                      flex: 1,
+                      child: ListView(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        children: <Widget>[
 
-                        // Space ===============
-                        SizedBox(
-                          width: screenWidth,
-                          height: screenWidth * 0.05,
-                          child: Container(color: _bgcolor),
-                        ),
-                        // Space ===============
-
-                        // logo
-                        // image size : 1924 * 1462 px
-                        Image.asset(
-                          'assets/image/logo.png',
-                          width: screenWidth * 0.4,
-                          height: screenWidth * 0.4 * (1462 / 1924),
-                        ),
-
-                        // carousel ad card
-                        SizedBox(
-                          width: screenWidth,
-                          height: screenWidth * 0.4,
-                          child: Container(
-                            padding: EdgeInsets.all(screenWidth * 0.02),
-                            child: Stack(
-                              children: <Widget>[
-                                CarouselSlider(
-                                  height: screenWidth * 0.4,
-                                  autoPlay: true,
-                                  viewportFraction: 1.0,
-                                  onPageChanged: (index) {
-                                    setState(() {
-                                      _currentBanner = index;
-                                    });
-                                  },
-                                  items: _banner.map(
-                                          (i) {
-                                        return Container(
-                                          color: _bgcolor,
-                                          padding: EdgeInsets.all(10),
-                                          child: Image.asset(i),
-                                        );
-                                      }
-                                  ).toList(),
-                                ),
-
-                                // indicate dot
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: List.generate(_banner.length, (index) {
-                                      return Container(
-                                        width: screenWidth * 0.01,
-                                        height: screenWidth * 0.01,
-                                        margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01, horizontal: screenWidth * 0.01),
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: _currentBanner == index
-                                              ? Color.fromRGBO(255, 255, 255, 0.9)
-                                              : Color.fromRGBO(255, 255, 255, 0.4),
-                                        ),
-                                      );
-                                    }),
-                                  ),
-                                )
-                              ],
-                            )
-                          ),
-                        ),
-
-                        // location select
-                        RawMaterialButton(
-                          onPressed: _locationButtonClicked,
-                          child: SizedBox(
+                          // Space ===============
+                          SizedBox(
                             width: screenWidth,
-                            height: screenWidth * 0.15,
+                            height: screenWidth * 0.05,
+                            child: Container(color: bgcolor),
+                          ),
+                          // Space ===============
+
+                          // logo
+                          // image size : 1924 * 1462 px
+                          Image.asset(
+                            'assets/image/logo.png',
+                            width: screenWidth * 0.4,
+                            height: screenWidth * 0.4 * (1462 / 1924),
+                          ),
+
+                          // carousel ad card
+                          SizedBox(
+                            width: screenWidth,
+                            height: screenWidth * 0.4,
                             child: Container(
                                 padding: EdgeInsets.all(screenWidth * 0.02),
-                                child: Container(
+                                child: Stack(
+                                  children: <Widget>[
+                                    CarouselSlider(
+                                      height: screenWidth * 0.4,
+                                      autoPlay: true,
+                                      viewportFraction: 1.0,
+                                      onPageChanged: (index) {
+                                        setState(() {
+                                          _currentBanner = index;
+                                        });
+                                      },
+                                      items: _banner.map(
+                                              (i) {
+                                            return Container(
+                                              color: bgcolor,
+                                              padding: EdgeInsets.all(10),
+                                              child: Image.asset(i),
+                                            );
+                                          }
+                                      ).toList(),
+                                    ),
+
+                                    // indicate dot
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: List.generate(_banner.length, (index) {
+                                          return Container(
+                                            width: screenWidth * 0.01,
+                                            height: screenWidth * 0.01,
+                                            margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01, horizontal: screenWidth * 0.01),
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: _currentBanner == index
+                                                  ? Color.fromRGBO(255, 255, 255, 0.9)
+                                                  : Color.fromRGBO(255, 255, 255, 0.4),
+                                            ),
+                                          );
+                                        }),
+                                      ),
+                                    )
+                                  ],
+                                )
+                            ),
+                          ),
+
+                          // location select
+                          RawMaterialButton(
+                            onPressed: _locationButtonClicked,
+                            child: SizedBox(
+                              width: screenWidth,
+                              height: screenWidth * 0.15,
+                              child: Container(
+                                  padding: EdgeInsets.all(screenWidth * 0.02),
+                                  child: Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: _bgcolor),
+                                      border: Border.all(color: bgcolor),
                                       borderRadius: BorderRadius.all(Radius.circular(5)),
                                       color: Colors.white,
                                     ),
@@ -634,8 +637,8 @@ class _TabMainPageState extends State<TabMainPage> {
 
                                         Text(
                                           _selectedSido == ''
-                                            ? '지역 선택'
-                                            : _selectedSido + ' ' + _selectedGungu + ' ' + _selectedDong,
+                                              ? '지역 선택'
+                                              : _selectedSido + ' ' + _selectedGungu + ' ' + _selectedDong,
                                           style: TextStyle(
                                             fontFamily: 'dream5',
                                             fontSize: screenWidth * 0.038,
@@ -645,544 +648,552 @@ class _TabMainPageState extends State<TabMainPage> {
                                         )
                                       ],
                                     ),
-                                )
+                                  )
+                              ),
                             ),
                           ),
-                        ),
 
 
-                        // subject select
-                        SizedBox(
-                          width: screenWidth,
-                          height: screenWidth * 0.5,
-                          child: Container(
-                            padding: EdgeInsets.all(screenWidth * 0.02),
+                          // subject select
+                          SizedBox(
+                            width: screenWidth,
+                            height: screenWidth * 0.5,
                             child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: _bgcolor),
-                                borderRadius: BorderRadius.all(Radius.circular(5)),
-                                color: Colors.white,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-                                      // korean
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedSubject == 'korean' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedSubject = 'korean';
-                                            });
-                                          },
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                'assets/image/sub_kor.png',
-                                                width: screenWidth * 0.15,
-                                                height: screenWidth * 0.15,
-                                              ),
-                                              Text(
-                                                  '국어',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Conture Line
-                                      Container(
-                                        height: screenWidth * 0.2,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(width: 0.5, color: Colors.black12),
-                                        ),
-                                      ),
-
-                                      // english
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedSubject == 'english' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedSubject = 'english';
-                                            });
-                                          },
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                'assets/image/sub_eng.png',
-                                                width: screenWidth * 0.15,
-                                                height: screenWidth * 0.15,
-                                              ),
-                                              Text(
-                                                  '영어',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Conture Line
-                                      Container(
-                                        height: screenWidth * 0.2,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(width: 0.5, color: Colors.black12),
-                                        ),
-                                      ),
-
-                                      // math
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedSubject == 'math' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedSubject = 'math';
-                                            });
-                                          },
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                'assets/image/sub_math.png',
-                                                width: screenWidth * 0.15,
-                                                height: screenWidth * 0.15,
-                                              ),
-                                              Text(
-                                                  '수학',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Conture Line
-                                      Container(
-                                        height: screenWidth * 0.2,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(width: 0.5, color: Colors.black12),
-                                        ),
-                                      ),
-
-                                      // social
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedSubject == 'social' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedSubject = 'social';
-                                            });
-                                          },
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                'assets/image/sub_social.png',
-                                                width: screenWidth * 0.15,
-                                                height: screenWidth * 0.15,
-                                              ),
-                                              Text(
-                                                  '사회',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  // Conture Line
-                                  Container(
-                                    width: screenWidth * 0.9,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(width: 0.5, color: Colors.black12),
-                                    ),
-                                  ),
-
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: <Widget>[
-
-                                      // science
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedSubject == 'science' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedSubject = 'science';
-                                            });
-                                          },
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                'assets/image/sub_sci.png',
-                                                width: screenWidth * 0.15,
-                                                height: screenWidth * 0.15,
-                                              ),
-                                              Text(
-                                                  '과학',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Conture Line
-                                      Container(
-                                        height: screenWidth * 0.2,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(width: 0.5, color: Colors.black12),
-                                        ),
-                                      ),
-
-                                      // writing
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedSubject == 'writing' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedSubject = 'writing';
-                                            });
-                                          },
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                'assets/image/sub_write.png',
-                                                width: screenWidth * 0.15,
-                                                height: screenWidth * 0.15,
-                                              ),
-                                              Text(
-                                                  '논술',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Conture Line
-                                      Container(
-                                        height: screenWidth * 0.2,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(width: 0.5, color: Colors.black12),
-                                        ),
-                                      ),
-
-                                      // entertainment
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedSubject == 'entertainment' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedSubject = 'entertainment';
-                                            });
-                                          },
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                'assets/image/sub_kor.png',
-                                                width: screenWidth * 0.15,
-                                                height: screenWidth * 0.15,
-                                              ),
-                                              Text(
-                                                  '예체능',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Conture Line
-                                      Container(
-                                        height: screenWidth * 0.2,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(width: 0.5, color: Colors.black12),
-                                        ),
-                                      ),
-
-                                      // etc
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedSubject == 'etc' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedSubject = 'etc';
-                                            });
-                                          },
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                            children: <Widget>[
-                                              Image.asset(
-                                                'assets/image/sub_kor.png',
-                                                width: screenWidth * 0.15,
-                                                height: screenWidth * 0.15,
-                                              ),
-                                              Text(
-                                                  '기타',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            )
-                          ),
-                        ),
-
-                        // age, search button
-                        Row(
-                          children: <Widget>[
-                            // age select button
-                            SizedBox(
-                              width: screenWidth * 0.7,
-                              height: screenWidth * 0.2,
-                              child: Container(
                                 padding: EdgeInsets.all(screenWidth * 0.02),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: _bgcolor),
+                                    border: Border.all(color: bgcolor),
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
                                     color: Colors.white,
                                   ),
-                                  child: Row(
+                                  child: Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: <Widget>[
-                                      // 초등
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedAge == '초등' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedAge = '초등';
-                                            });
-                                          },
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            height: screenWidth * 0.14,
-                                            child: Text(
-                                              '초등',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontFamily: 'dream5',
-                                                fontSize: screenWidth * 0.05,
-                                                letterSpacing: -2,
-                                                color: Colors.black,
-                                              )
-                                            )
+
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          // korean
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedSubject == 'korean' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedSubject = 'korean';
+                                                });
+                                              },
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                  Image.asset(
+                                                    'assets/image/sub_kor.png',
+                                                    width: screenWidth * 0.15,
+                                                    height: screenWidth * 0.15,
+                                                  ),
+                                                  Text(
+                                                      '국어',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
+
+                                          // Contour Line
+                                          Container(
+                                            height: screenWidth * 0.2,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(width: 0.5, color: Colors.black12),
+                                            ),
+                                          ),
+
+                                          // english
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedSubject == 'english' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedSubject = 'english';
+                                                });
+                                              },
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                  Image.asset(
+                                                    'assets/image/sub_eng.png',
+                                                    width: screenWidth * 0.15,
+                                                    height: screenWidth * 0.15,
+                                                  ),
+                                                  Text(
+                                                      '영어',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Conture Line
+                                          Container(
+                                            height: screenWidth * 0.2,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(width: 0.5, color: Colors.black12),
+                                            ),
+                                          ),
+
+                                          // math
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedSubject == 'math' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedSubject = 'math';
+                                                });
+                                              },
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                  Image.asset(
+                                                    'assets/image/sub_math.png',
+                                                    width: screenWidth * 0.15,
+                                                    height: screenWidth * 0.15,
+                                                  ),
+                                                  Text(
+                                                      '수학',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Conture Line
+                                          Container(
+                                            height: screenWidth * 0.2,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(width: 0.5, color: Colors.black12),
+                                            ),
+                                          ),
+
+                                          // social
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedSubject == 'social' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedSubject = 'social';
+                                                });
+                                              },
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                  Image.asset(
+                                                    'assets/image/sub_social.png',
+                                                    width: screenWidth * 0.15,
+                                                    height: screenWidth * 0.15,
+                                                  ),
+                                                  Text(
+                                                      '사회',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
 
                                       // Conture Line
                                       Container(
-                                        height: screenWidth * 0.1,
+                                        width: screenWidth * 0.9,
                                         decoration: BoxDecoration(
                                           border: Border.all(width: 0.5, color: Colors.black12),
                                         ),
                                       ),
 
-                                      // 중등
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedAge == '중등' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedAge = '중등';
-                                            });
-                                          },
-                                          child: Container(
-                                              alignment: Alignment.center,
-                                              height: screenWidth * 0.14,
-                                              child: Text(
-                                                  '중등',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+
+                                          // science
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedSubject == 'science' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedSubject = 'science';
+                                                });
+                                              },
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                  Image.asset(
+                                                    'assets/image/sub_sci.png',
+                                                    width: screenWidth * 0.15,
+                                                    height: screenWidth * 0.15,
+                                                  ),
+                                                  Text(
+                                                      '과학',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
                                                   )
-                                              )
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
 
-                                      // Contour Line
-                                      Container(
-                                        height: screenWidth * 0.1,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(width: 0.5, color: Colors.black12),
-                                        ),
-                                      ),
+                                          // Conture Line
+                                          Container(
+                                            height: screenWidth * 0.2,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(width: 0.5, color: Colors.black12),
+                                            ),
+                                          ),
 
-                                      // 고등
-                                      Flexible(
-                                        flex: 1,
-                                        child: RawMaterialButton(
-                                          fillColor: _selectedAge == '고등' ? _highlight : Colors.white,
-                                          elevation: 0,
-                                          onPressed: (){
-                                            setState(() {
-                                              _selectedAge = '고등';
-                                            });
-                                          },
-                                          child: Container(
-                                              alignment: Alignment.center,
-                                              height: screenWidth * 0.14,
-                                              child: Text(
-                                                  '고등',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.05,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
+                                          // writing
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedSubject == 'writing' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedSubject = 'writing';
+                                                });
+                                              },
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                  Image.asset(
+                                                    'assets/image/sub_write.png',
+                                                    width: screenWidth * 0.15,
+                                                    height: screenWidth * 0.15,
+                                                  ),
+                                                  Text(
+                                                      '논술',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
                                                   )
-                                              )
+                                                ],
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
 
+                                          // Conture Line
+                                          Container(
+                                            height: screenWidth * 0.2,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(width: 0.5, color: Colors.black12),
+                                            ),
+                                          ),
+
+                                          // entertainment
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedSubject == 'entertainment' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedSubject = 'entertainment';
+                                                });
+                                              },
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                  Image.asset(
+                                                    'assets/image/sub_kor.png',
+                                                    width: screenWidth * 0.15,
+                                                    height: screenWidth * 0.15,
+                                                  ),
+                                                  Text(
+                                                      '예체능',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Conture Line
+                                          Container(
+                                            height: screenWidth * 0.2,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(width: 0.5, color: Colors.black12),
+                                            ),
+                                          ),
+
+                                          // etc
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedSubject == 'etc' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedSubject = 'etc';
+                                                });
+                                              },
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                children: <Widget>[
+                                                  Image.asset(
+                                                    'assets/image/sub_kor.png',
+                                                    width: screenWidth * 0.15,
+                                                    height: screenWidth * 0.15,
+                                                  ),
+                                                  Text(
+                                                      '기타',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
                                     ],
                                   ),
                                 )
-                              ),
                             ),
+                          ),
 
-                            // search button
-                            SizedBox(
-                              width: screenWidth * 0.3,
-                              height: screenWidth * 0.2,
-                              child: Container(
-                                padding: EdgeInsets.all(screenWidth * 0.02),
-                                child: RawMaterialButton(
-                                  onPressed: (){},
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: _bgcolor),
-                                      borderRadius: BorderRadius.all(Radius.circular(5)),
-                                      color: _btncolor,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "검색",
-                                        style: TextStyle(
-                                          fontFamily: 'dream5',
-                                          fontSize: screenWidth * 0.05,
-                                          letterSpacing: 2,
-                                          color: Colors.white,
-                                        ),
+                          // age, search button
+                          Row(
+                            children: <Widget>[
+                              // age select button
+                              SizedBox(
+                                width: screenWidth * 0.7,
+                                height: screenWidth * 0.2,
+                                child: Container(
+                                    padding: EdgeInsets.all(screenWidth * 0.02),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: bgcolor),
+                                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                                        color: Colors.white,
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          // 초등
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedAge == '초등' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedAge = '초등';
+                                                });
+                                              },
+                                              child: Container(
+                                                  alignment: Alignment.center,
+                                                  height: screenWidth * 0.14,
+                                                  child: Text(
+                                                      '초등',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Conture Line
+                                          Container(
+                                            height: screenWidth * 0.1,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(width: 0.5, color: Colors.black12),
+                                            ),
+                                          ),
+
+                                          // 중등
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedAge == '중등' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedAge = '중등';
+                                                });
+                                              },
+                                              child: Container(
+                                                  alignment: Alignment.center,
+                                                  height: screenWidth * 0.14,
+                                                  child: Text(
+                                                      '중등',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Contour Line
+                                          Container(
+                                            height: screenWidth * 0.1,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(width: 0.5, color: Colors.black12),
+                                            ),
+                                          ),
+
+                                          // 고등
+                                          Flexible(
+                                            flex: 1,
+                                            child: RawMaterialButton(
+                                              fillColor: _selectedAge == '고등' ? highlightcolor : Colors.white,
+                                              elevation: 0,
+                                              onPressed: (){
+                                                setState(() {
+                                                  _selectedAge = '고등';
+                                                });
+                                              },
+                                              child: Container(
+                                                  alignment: Alignment.center,
+                                                  height: screenWidth * 0.14,
+                                                  child: Text(
+                                                      '고등',
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream5',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                              ),
+                                            ),
+                                          ),
+
+                                        ],
                                       ),
                                     )
-                                  )
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
 
-                        // Space ===============
-                        SizedBox(
-                          width: screenWidth,
-                          height: screenWidth * 0.05,
-                          child: Container(color: _bgcolor),
-                        ),
-                        // Space ===============
+                              // search button
+                              SizedBox(
+                                width: screenWidth * 0.3,
+                                height: screenWidth * 0.2,
+                                child: Container(
+                                  padding: EdgeInsets.all(screenWidth * 0.02),
+                                  child: RawMaterialButton(
+                                      onPressed: (){
+                                        String _selectedAddr = _selectedSido + ' ' + _selectedGungu + ' ' + _selectedDong;
+                                        Navigator.push(
+                                          context, MaterialPageRoute(
+                                            builder: (context) => SearchPage(_selectedAddr, _selectedSubject, _selectedAge)
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: bgcolor),
+                                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                                            color: btncolor,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              "검색",
+                                              style: TextStyle(
+                                                fontFamily: 'dream5',
+                                                fontSize: screenWidth * 0.05,
+                                                letterSpacing: 2,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          )
+                                      )
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
 
-                      ],
-                    )
-                ),
+                          // Space ===============
+                          SizedBox(
+                            width: screenWidth,
+                            height: screenWidth * 0.05,
+                            child: Container(color: bgcolor),
+                          ),
+                          // Space ===============
 
-              ],
-            )
+                        ],
+                      )
+                  ),
+
+                ],
+              )
+          ),
         ),
-      ),
-    );
-  }
+      );
+    }
+  );
 }
