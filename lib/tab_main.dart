@@ -494,19 +494,113 @@ class _TabMainPageState extends State<TabMainPage> {
   Future<bool> _onBackPressed() {
     return showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text("학원GO를 종료하시겠습니까?"),
-          actions: <Widget>[
-            FlatButton(
-              child: Text("네"),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-            FlatButton(
-              child: Text("아니오"),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-          ],
-        )
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          double screenWidth = MediaQuery.of(context).size.width;
+
+          return Center(
+              child: SizedBox(
+                width: screenWidth * 0.7,
+                height: screenWidth * 0.5,
+                child: Container(
+                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        // space
+                        SizedBox(height: screenWidth * 0.11),
+
+                        // Guide Text
+                        Material(
+                          child: Container(
+                            color: Colors.white,
+                            child: Text(
+                                "학원고를 종료하시겠습니까?",
+                                style: TextStyle(
+                                    fontFamily: 'dream4',
+                                    fontSize: screenWidth * 0.05,
+                                    letterSpacing: -2,
+                                    color: Colors.black
+                                )
+                            )
+                          )
+                        ),
+
+                        // space
+                        SizedBox(height: screenWidth * 0.11),
+
+                        // button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            // exit
+                            RawMaterialButton(
+                              onPressed: (){
+                                Navigator.pop(context, true);
+                              },
+                              child: SizedBox(
+                                width: screenWidth * 0.325,
+                                height: screenWidth * 0.075,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    color: bgcolor,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                        "종료",
+                                        style: TextStyle(
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.04,
+                                            letterSpacing: -2,
+                                            color: Colors.white
+                                        )
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // back
+                            RawMaterialButton(
+                              onPressed: (){
+                                Navigator.pop(context, false);
+                              },
+                              child: SizedBox(
+                                width: screenWidth * 0.325,
+                                height: screenWidth * 0.075,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    color: Colors.black45,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                        "취소",
+                                        style: TextStyle(
+                                            fontFamily: 'dream5',
+                                            fontSize: screenWidth * 0.04,
+                                            letterSpacing: -2,
+                                            color: Colors.white
+                                        )
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ],
+                    )
+                ),
+              )
+          );
+        }
     );
   }
 
