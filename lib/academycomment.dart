@@ -5,10 +5,18 @@ import 'package:hwgo/settings.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/userbloc.dart';
 
-// for phone call
-import 'package:url_launcher/url_launcher.dart';
+// rest api request
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 
 class AcademyCommentPage extends StatefulWidget {
+  // Selected academy
+  AcademyInfo _currentAcademy;
+
+  // constructor
+  AcademyCommentPage(this._currentAcademy);
+
   @override
   _AcademyCommentPageState createState() => _AcademyCommentPageState();
 }
@@ -18,15 +26,116 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
   // sort option ( default : like )
   String _sortOption = '인기 댓글 순';
 
+  // user information
+  String _currentUser;
+
+  // academy comment list
+  List<AcademyComment> _academyComment = [];
+
+  // list offset and limit
+  int _offset = 0;
+  int _limit = 20;
+
+  // whether comment left
+  // TODO : comment buffer creation (case : no more comment left, but button is clickable)
+  bool _isCommentLeft = true;
+
+  // like for comment
+  void _likeComment(AcademyComment cmt) async {
+    final response = await http.post(
+        'http://hakwongo.com:3000/api2/comment/like',
+        body: {
+          'id' : cmt.id.toString(),
+          'user' : cmt.user,
+          'time' : cmt.time,
+          'comment' : cmt.comment,
+        }
+    );
+    setState(() {
+      _getComment();
+    });
+  }
+
+  // delete comment
+  void _deleteComment(AcademyComment del) async {
+    final response = await http.post(
+        'http://hakwongo.com:3000/api2/comment/delete',
+        body: {
+          'id' : del.id.toString(),
+          'user' : del.user,
+          'time' : del.time,
+          'comment' : del.comment,
+        }
+    );
+    setState(() {
+      _getComment();
+    });
+  }
+
+  // get comment list
+  void _getComment() async {
+    final response = await http.post(
+        'http://hakwongo.com:3000/api2/comment/get',
+        body: {
+          'id' : widget._currentAcademy.id.toString(),
+          'limit' : _limit.toString(),
+          'offset' : _offset.toString(),
+          'order' : _sortOption == '인기 댓글 순'
+            ? 'heart'
+            : 'time',
+        }
+    );
+    final List<AcademyComment> parsedAcademyComment = jsonDecode(response.body)
+        .map<AcademyComment>((json) => AcademyComment.fromJSON(json))
+        .toList();
+    setState(() {
+      _academyComment.clear();
+      _academyComment.addAll(parsedAcademyComment);
+    });
+  }
+
+  // get comment list
+  void _getMoreComment() async {
+    _offset += _limit;
+    final response = await http.post(
+        'http://hakwongo.com:3000/api2/comment/get',
+        body: {
+          'id' : widget._currentAcademy.id.toString(),
+          'limit' : _limit.toString(),
+          'offset' : _offset.toString(),
+          'order' : _sortOption == '인기 댓글 순'
+            ? 'heart'
+            : 'time',
+        }
+    );
+    if (response.body == '[]') {  // no more data
+      setState(() {
+        _isCommentLeft = false;
+      });
+    } else {
+      final List<AcademyComment> parsedAcademyComment = jsonDecode(response.body)
+          .map<AcademyComment>((json) => AcademyComment.fromJSON(json))
+          .toList();
+      setState(() {
+        _academyComment.addAll(parsedAcademyComment);
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _getComment();
   }
 
   @override
   Widget build(BuildContext context) => BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         double screenWidth = MediaQuery.of(context).size.width;
+
+        if (state is UserFetched) {
+          _currentUser = state.user.id.toString();
+        }
 
         // back button handler
         // ignore: missing_return
@@ -103,7 +212,7 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
                                 children: <Widget>[
-                                  // location info
+                                  // upper bar (sort option)
                                   SizedBox(
                                     width: screenWidth,
                                     height: screenWidth * 0.11,
@@ -171,6 +280,9 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
                                                 onChanged: (String newOption) {
                                                   setState(() {
                                                     _sortOption = newOption;
+                                                    _offset = 0;
+                                                    _isCommentLeft = true;
+                                                    _getComment();
                                                   });
                                                 },
                                                 items: <String>['인기 댓글 순', '시간순']
@@ -206,764 +318,140 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
                                       border: Border.all(width: 0.5, color: Colors.black),
                                     ),
                                   ),
-
-                                  // popular comment (1~3)
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 10일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 54개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '사장님이 친절하고 음식이 맛있어요~',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
+                                ]
+                                // comment get from server
+                                + List.generate(_academyComment.length, (index) {
+                                    return SizedBox(
+                                      width: screenWidth,
+                                      child: Container(
+                                        padding: EdgeInsets.all(screenWidth * 0.02),
+                                        margin: EdgeInsets.only(bottom: screenWidth * 0.02),
+                                        color: commentcolor,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            // time and like information, delete and like button
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                // time
+                                                Text(
+                                                    _academyComment[index].time,
+                                                    style: TextStyle(
                                                       fontFamily: 'dream4',
                                                       fontSize: screenWidth * 0.04,
                                                       letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
+                                                      color: Colors.black45,
+                                                    )
+                                                ),
 
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+                                                // padding
+                                                SizedBox(width: screenWidth * 0.1),
 
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 11일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
+                                                // delete
+                                                _currentUser == _academyComment[index].user
+                                                    ? SizedBox(
+                                                    width: screenWidth * 0.08,
+                                                    height: screenWidth * 0.04,
+                                                    child: RawMaterialButton(
+                                                        onPressed: () => _deleteComment(_academyComment[index]),
+                                                        child: Icon(
+                                                          Icons.delete,
+                                                          size: screenWidth * 0.04,
+                                                        )
+                                                    )
+                                                )
+                                                    : SizedBox(
+                                                  width: screenWidth * 0.08,
+                                                  height: screenWidth * 0.04,
+                                                ),
 
-                                              Text(
-                                                  '좋아요 5424개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
+                                                // like
+                                                SizedBox(
+                                                    width: screenWidth * 0.08,
+                                                    height: screenWidth * 0.04,
+                                                    child: RawMaterialButton(
+                                                        onPressed: () => _likeComment(_academyComment[index]),
+                                                        child: Icon(
+                                                            Icons.favorite,
+                                                            size: screenWidth * 0.04,
+                                                            color: Colors.red
+                                                        )
+                                                    )
+                                                ),
 
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '스타크래프트버젼1.16.1 돌에 긁힌듯한 상처 가 있어서 검붉은색의 피가 엉켜있었다. ".........?" 로이와 필이 의아 전보를 울리는 모택동군을 시기하여 전투중인 신사군에게 다시 공격을 감행하여 9천명을 사 스타크래프트버젼1.16.1 갑자기 풀린 탓에 다리에 힘이 제대로 들어가지 않았지만 그녀는 이를 악물고 일어섰다. "어 을 해보았다. 불현듯 보여주 었던 로이의 야수와도 같은 모습이 떠올랐고, 그 뒤를 이어 어 스타크래프트버젼1.16.1 지만 소녀는 멈추지 않았다.로이는 저 너머에서 그런 자기 자신을 바라보며 손을 뻗었다.여 맞아 초록색으로 퇴색한 구리로 된 돔인데 이 위에는 예수 그리스도의 상이 스타크래프트버젼1',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
+                                                // like
+                                                Text(
+                                                    '좋아요 ' + _academyComment[index].heart.toString() + '개',
+                                                    style: TextStyle(
                                                       fontFamily: 'dream4',
                                                       fontSize: screenWidth * 0.04,
                                                       letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
+                                                      color: Colors.black,
+                                                    )
+                                                )
+                                              ],
+                                            ),
 
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 12일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
+                                            // Contour Line
+                                            Container(
+                                              width: screenWidth * 0.9,
+                                              margin: EdgeInsets.all(screenWidth * 0.01),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(width: 0.5, color: Colors.black12),
                                               ),
+                                            ),
 
-                                              Text(
-                                                  '좋아요 124개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
+                                            // comment
+                                            Container(
+                                                child: Text(
+                                                    _academyComment[index].comment,
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                        fontFamily: 'dream4',
+                                                        fontSize: screenWidth * 0.04,
+                                                        letterSpacing: -1,
+                                                        color: Colors.black
+                                                    )
+                                                )
+                                            ),
 
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  })
+
+                                  // additional result
+                                + [
+                                  _isCommentLeft
+                                      ? SizedBox(
+                                      width: screenWidth * 0.9,
+                                      height: screenWidth * 0.15,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          RawMaterialButton(
+                                            onPressed: _getMoreComment,
+                                            child: Container(
+                                                width: screenWidth * 0.9,
+                                                child: Center(
+                                                    child: Text(
+                                                        '댓글 더 보기',
+                                                        style: TextStyle(
+                                                          fontFamily: 'dream5',
+                                                          fontSize: screenWidth * 0.055,
+                                                          letterSpacing: -2,
+                                                          color: Colors.black,
+                                                        )
+                                                    )
+                                                )
                                             ),
                                           ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '학원이 역 근처라 접근성이 좋고 어쩌고 저쩌고',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
                                         ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 12일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 124개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '학원이 역 근처라 접근성이 좋고 어쩌고 저쩌고',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 12일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 124개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '학원이 역 근처라 접근성이 좋고 어쩌고 저쩌고',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 12일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 124개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '학원이 역 근처라 접근성이 좋고 어쩌고 저쩌고',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 10일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 54개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '사장님이 친절하고 음식이 맛있어요~',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 11일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 5424개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '스타크래프트버젼1.16.1 돌에 긁힌듯한 상처 가 있어서 검붉은색의 피가 엉켜있었다. ".........?" 로이와 필이 의아 전보를 울리는 모택동군을 시기하여 전투중인 신사군에게 다시 공격을 감행하여 9천명을 사 스타크래프트버젼1.16.1 갑자기 풀린 탓에 다리에 힘이 제대로 들어가지 않았지만 그녀는 이를 악물고 일어섰다. "어 을 해보았다. 불현듯 보여주 었던 로이의 야수와도 같은 모습이 떠올랐고, 그 뒤를 이어 어 스타크래프트버젼1.16.1 지만 소녀는 멈추지 않았다.로이는 저 너머에서 그런 자기 자신을 바라보며 손을 뻗었다.여 맞아 초록색으로 퇴색한 구리로 된 돔인데 이 위에는 예수 그리스도의 상이 스타크래프트버젼1',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 12일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 124개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '학원이 역 근처라 접근성이 좋고 어쩌고 저쩌고',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 12일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 124개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '학원이 역 근처라 접근성이 좋고 어쩌고 저쩌고',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 12일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 124개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '학원이 역 근처라 접근성이 좋고 어쩌고 저쩌고',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Text(
-                                                  '2020년 7월 12일',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
-
-                                              Text(
-                                                  '좋아요 124개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
-                                            ],
-                                          ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  '학원이 역 근처라 접근성이 좋고 어쩌고 저쩌고',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
+                                      )
+                                  )
+                                      : Container()
                                 ],
                               ),
                             ),

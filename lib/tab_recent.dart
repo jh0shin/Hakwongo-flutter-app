@@ -40,7 +40,7 @@ class _RecentPageState extends State<RecentPage> {
                                 child: Text(
                                     "학원고를 종료하시겠습니까?",
                                     style: TextStyle(
-                                        fontFamily: 'dream4',
+                                        fontFamily: 'dream5',
                                         fontSize: screenWidth * 0.05,
                                         letterSpacing: -2,
                                         color: Colors.black
@@ -63,7 +63,7 @@ class _RecentPageState extends State<RecentPage> {
                               },
                               child: SizedBox(
                                 width: screenWidth * 0.325,
-                                height: screenWidth * 0.075,
+                                height: screenWidth * 0.1,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -74,7 +74,7 @@ class _RecentPageState extends State<RecentPage> {
                                         "종료",
                                         style: TextStyle(
                                             fontFamily: 'dream4',
-                                            fontSize: screenWidth * 0.04,
+                                            fontSize: screenWidth * 0.05,
                                             letterSpacing: -2,
                                             color: Colors.white
                                         )
@@ -91,7 +91,7 @@ class _RecentPageState extends State<RecentPage> {
                               },
                               child: SizedBox(
                                 width: screenWidth * 0.325,
-                                height: screenWidth * 0.075,
+                                height: screenWidth * 0.1,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -101,8 +101,8 @@ class _RecentPageState extends State<RecentPage> {
                                     child: Text(
                                         "취소",
                                         style: TextStyle(
-                                            fontFamily: 'dream5',
-                                            fontSize: screenWidth * 0.04,
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.05,
                                             letterSpacing: -2,
                                             color: Colors.white
                                         )

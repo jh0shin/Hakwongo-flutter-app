@@ -11,6 +11,8 @@ class MyInfoPage extends StatefulWidget {
 
 class _MyInfoPageState extends State<MyInfoPage> {
 
+  String _loginUser = '';                                                       // logged in user information
+
   // Back Button Event controller
   Future<bool> _onBackPressed() {
     return showDialog(
@@ -42,7 +44,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                 child: Text(
                                     "학원고를 종료하시겠습니까?",
                                     style: TextStyle(
-                                        fontFamily: 'dream4',
+                                        fontFamily: 'dream5',
                                         fontSize: screenWidth * 0.05,
                                         letterSpacing: -2,
                                         color: Colors.black
@@ -65,7 +67,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                               },
                               child: SizedBox(
                                 width: screenWidth * 0.325,
-                                height: screenWidth * 0.075,
+                                height: screenWidth * 0.1,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -76,7 +78,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                         "종료",
                                         style: TextStyle(
                                             fontFamily: 'dream4',
-                                            fontSize: screenWidth * 0.04,
+                                            fontSize: screenWidth * 0.05,
                                             letterSpacing: -2,
                                             color: Colors.white
                                         )
@@ -93,7 +95,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                               },
                               child: SizedBox(
                                 width: screenWidth * 0.325,
-                                height: screenWidth * 0.075,
+                                height: screenWidth * 0.1,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -103,8 +105,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                     child: Text(
                                         "취소",
                                         style: TextStyle(
-                                            fontFamily: 'dream5',
-                                            fontSize: screenWidth * 0.04,
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.05,
                                             letterSpacing: -2,
                                             color: Colors.white
                                         )
@@ -124,8 +126,6 @@ class _MyInfoPageState extends State<MyInfoPage> {
         }
     );
   }
-
-  String _loginUser = '';                                                       // logged in user information
 
   @override
   void initState() {

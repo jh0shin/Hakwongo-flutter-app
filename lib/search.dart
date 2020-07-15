@@ -6,15 +6,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hwgo/bloc/userbloc.dart';
 import 'package:hwgo/academyinfo.dart';
 
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 class SearchPage extends StatefulWidget {
   // search condition
   // access by widget.(variable name)
-  String _selectedAddr;
+  String _selectedSido;
+  String _selectedGungu;
+  String _selectedDong;
   String _selectedSubject;
   String _selectedAge;
 
   // constructor
-  SearchPage(this._selectedAddr, this._selectedSubject, this._selectedAge);
+  SearchPage(this._selectedSido, this._selectedGungu, this._selectedDong,
+      this._selectedSubject, this._selectedAge);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -22,11 +28,76 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
 
+  // search result
+  List<AcademyInfo> _searchResult = [];
+
+  // search result offset
+  int _offset = 0;
+  int _limit = 10;
+  bool _moreResultLeft = true;
+
+  // post http request for given conditions
+  void _getSearchResult() async {
+    final response = await http.post(
+      'http://hakwongo.com:3000/api2/search/init',
+      body: {
+        'limit' : _limit.toString(),
+        'offset' : _offset.toString(),
+        'sido' : widget._selectedSido,
+        'gungu' : widget._selectedGungu,
+        'dong' : widget._selectedDong,
+        'subject' : widget._selectedSubject,
+        'age' : widget._selectedAge,
+      },
+    );
+    print(response.body);
+    if (response.body != null) {
+      final List<AcademyInfo> parsedSearchResult = jsonDecode(response.body)
+          .map<AcademyInfo>((json) => AcademyInfo.fromJSON(json))
+          .toList();
+      setState(() {
+        _searchResult.clear();
+        _searchResult.addAll(parsedSearchResult);
+      });
+    }
+  }
+
+  // get more search result
+  void _getMoreSearchResult() async {
+    _offset += 1;
+
+    final response = await http.post(
+      'http://hakwongo.com:3000/api2/search/init',
+      body: {
+        'limit' : _limit.toString(),
+        'offset' : (_offset * _limit).toString(),
+        'sido' : widget._selectedSido,
+        'gungu' : widget._selectedGungu,
+        'dong' : widget._selectedDong,
+        'subject' : widget._selectedSubject,
+        'age' : widget._selectedAge,
+      }
+    );
+    print(response.body);
+    if (response.body == '[]') {  // no more data
+      setState(() {
+        _moreResultLeft = false;
+      });
+    } else {                      // more data exists
+      final List<AcademyInfo> parsedSearchResult = jsonDecode(response.body)
+          .map<AcademyInfo>((json) => AcademyInfo.fromJSON(json))
+          .toList();
+      setState(() {
+        _searchResult.addAll(parsedSearchResult);
+      });
+    }
+  }
+
   // academy button clicked -> goto academy info page
-  void _academyClicked() {
+  void _academyClicked(AcademyInfo _selectedAcademy) {
     Navigator.push(
       context, MaterialPageRoute(
-        builder: (context) => AcademyInfoPage()
+        builder: (context) => AcademyInfoPage(_selectedAcademy)
       )
     );
   }
@@ -34,6 +105,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
+    _getSearchResult();
   }
 
   @override
@@ -113,7 +185,9 @@ class _SearchPageState extends State<SearchPage> {
                               Expanded(
                                 child: Center(
                                     child: Text(
-                                      '필터 :   ' + widget._selectedAddr + ',   ' + widget._selectedSubject + ',   ' + widget._selectedAge,
+                                      '필터 :   ' + widget._selectedSido + ' ' + widget._selectedGungu + ' '
+                                          + widget._selectedDong + ',   ' + widget._selectedSubject + ',   '
+                                          + widget._selectedAge,
                                       style: TextStyle(
                                         fontFamily: 'dream5',
                                         fontSize: screenWidth * 0.038,
@@ -144,66 +218,65 @@ class _SearchPageState extends State<SearchPage> {
                         child: ListView(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          children: <Widget>[
-                            // academy info(button)
-                            SizedBox(
+                          children: List.generate(_searchResult.length, (index) {
+                            return SizedBox(
                                 width: screenWidth * 0.9,
                                 height: screenWidth * 0.2,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: <Widget>[
                                     RawMaterialButton(
-                                      onPressed: _academyClicked,
+                                      onPressed: () => _academyClicked(_searchResult[index]),
                                       child: Container(
-                                        width: screenWidth * 0.9,
-                                        child: Row(
-                                          children: <Widget>[
-                                            Flexible(
-                                              flex: 1,
-                                              child: Image.asset(
-                                                // 1924 * 1462 px
-                                                'assets/image/logo.png',
-                                                width: screenWidth * 0.2,
-                                                height: screenWidth * 0.15,
+                                          width: screenWidth * 0.9,
+                                          child: Row(
+                                            children: <Widget>[
+                                              Flexible(
+                                                flex: 1,
+                                                child: Image.asset(
+                                                  // 1924 * 1462 px
+                                                  'assets/image/logo.png',
+                                                  width: screenWidth * 0.2,
+                                                  height: screenWidth * 0.15,
+                                                ),
                                               ),
-                                            ),
 
-                                            Flexible(
-                                                flex: 4,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    // 학원 이름
-                                                    Text(
-                                                        "이룸수학 학원",
-                                                        style: TextStyle(
-                                                          fontFamily: 'dream5',
-                                                          fontSize: screenWidth * 0.06,
-                                                          letterSpacing: -2,
-                                                          color: Colors.black,
-                                                        )
-                                                    ),
+                                              Flexible(
+                                                  flex: 4,
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      // 학원 이름
+                                                      Text(
+                                                          _searchResult[index].name,
+                                                          style: TextStyle(
+                                                            fontFamily: 'dream5',
+                                                            fontSize: screenWidth * 0.055,
+                                                            letterSpacing: -2,
+                                                            color: Colors.black,
+                                                          )
+                                                      ),
 
-                                                    // 학원 주소
-                                                    Text(
-                                                        '경기도 수원시 영통구 반달로 7번길 6 센타프라자 6층 그리고 주소가 길어지면',
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                          fontFamily:  'dream3',
-                                                          fontSize: screenWidth * 0.04,
-                                                          letterSpacing: -2,
-                                                          color: Colors.black45,
-                                                        )
-                                                    ),
+                                                      // 학원 주소
+                                                      Text(
+                                                          _searchResult[index].addr,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: TextStyle(
+                                                            fontFamily:  'dream3',
+                                                            fontSize: screenWidth * 0.04,
+                                                            letterSpacing: -2,
+                                                            color: Colors.black45,
+                                                          )
+                                                      ),
 
 
-                                                  ],
-                                                )
-                                            ),
+                                                    ],
+                                                  )
+                                              ),
 
-                                          ],
-                                        )
+                                            ],
+                                          )
                                       ),
                                     ),
 
@@ -216,81 +289,40 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                   ],
                                 )
-                            ),
+                            );
+                          })
 
-                            // academy info(button)
-                            SizedBox(
-                                width: screenWidth * 0.9,
-                                height: screenWidth * 0.2,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    RawMaterialButton(
-                                      onPressed: _academyClicked,
-                                      child: Container(
-                                        width: screenWidth * 0.9,
-                                        child: Row(
-                                          children: <Widget>[
-                                            Flexible(
-                                              flex: 1,
-                                              child: Image.asset(
-                                                // 1924 * 1462 px
-                                                'assets/image/logo.png',
-                                                width: screenWidth * 0.2,
-                                                height: screenWidth * 0.15,
-                                              ),
-                                            ),
-
-                                            Flexible(
-                                                flex: 4,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    // 학원 이름
-                                                    Text(
-                                                        "이이민민수수학학원원",
-                                                        style: TextStyle(
-                                                          fontFamily: 'dream5',
-                                                          fontSize: screenWidth * 0.06,
-                                                          letterSpacing: -2,
-                                                          color: Colors.black,
-                                                        )
-                                                    ),
-
-                                                    // 학원 주소
-                                                    Text(
-                                                        '경기도 성남시 분당구 수내1동 센타프라자 6층 그리고 주소가 길어지면',
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                          fontFamily:  'dream3',
-                                                          fontSize: screenWidth * 0.04,
-                                                          letterSpacing: -2,
-                                                          color: Colors.black45,
-                                                        )
-                                                    ),
-
-
-                                                  ],
+                          // additional result
+                            + [
+                              _moreResultLeft
+                                ? SizedBox(
+                                  width: screenWidth * 0.9,
+                                  height: screenWidth * 0.15,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      RawMaterialButton(
+                                        onPressed: _getMoreSearchResult,
+                                        child: Container(
+                                            width: screenWidth * 0.9,
+                                            child: Center(
+                                                child: Text(
+                                                    '검색 결과 더 보기',
+                                                    style: TextStyle(
+                                                      fontFamily: 'dream5',
+                                                      fontSize: screenWidth * 0.055,
+                                                      letterSpacing: -2,
+                                                      color: Colors.black,
+                                                    )
                                                 )
-                                            ),
-
-                                          ],
+                                            )
                                         ),
                                       ),
-                                    ),
-
-                                    // Contour line
-                                    Container(
-                                      width: screenWidth * 0.9,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(width: 0.5, color: Colors.black12),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                            ),
-                          ],
+                                    ],
+                                  )
+                              )
+                                : Container()
+                              ]
                         ),
                       ),
                     ),

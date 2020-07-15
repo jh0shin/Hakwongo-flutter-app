@@ -14,10 +14,6 @@ class TabMainPage extends StatefulWidget {
 
 class _TabMainPageState extends State<TabMainPage> {
 
-  // page index
-  // state : 'initState', 'searchResult'
-  String _searchPageState;
-
   // selected location
   String _selectedSido = '';
   String _selectedGungu = '';
@@ -95,9 +91,8 @@ class _TabMainPageState extends State<TabMainPage> {
 //  };
 
   Map<String, List<String>> _dong = {
-    '성남시 분당구' : ['', '분당동', '수내1동', '수내2동', '수내3동', '정자1동', '정자2동', '정자3동',
-    '정자동', '서현1동', '서현2동', '이매1동', '이매2동', '야탑1동', '야탑2동', '야탑3동',
-    '금곡동', '구미동', '구미1동', '판교동', '삼평동', '백현동', '운중동'],
+    '성남시 분당구' : ['', '분당동', '수내동', '정자동', '서현동', '이매동', '야탑동',
+    '금곡동', '구미동', '판교동', '삼평동', '백현동', '운중동'],
     '용인시 기흥구' : ['', '구갈동', '신갈동', '상갈동', '보라동', '영덕1동', '영덕2동', '서농동',
     '기흥동', '구성동', '마북동', '보정동', '동백1동', '동백2동', '동백3동', '상하동'],
     '용인시 수지구' : ['', '풍덕천1동', '풍덕천2동', '상현1동', '상현2동', '성복동', '신봉동',
@@ -521,7 +516,7 @@ class _TabMainPageState extends State<TabMainPage> {
                             child: Text(
                                 "학원고를 종료하시겠습니까?",
                                 style: TextStyle(
-                                    fontFamily: 'dream4',
+                                    fontFamily: 'dream5',
                                     fontSize: screenWidth * 0.05,
                                     letterSpacing: -2,
                                     color: Colors.black
@@ -544,7 +539,7 @@ class _TabMainPageState extends State<TabMainPage> {
                               },
                               child: SizedBox(
                                 width: screenWidth * 0.325,
-                                height: screenWidth * 0.075,
+                                height: screenWidth * 0.1,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -555,7 +550,7 @@ class _TabMainPageState extends State<TabMainPage> {
                                         "종료",
                                         style: TextStyle(
                                             fontFamily: 'dream4',
-                                            fontSize: screenWidth * 0.04,
+                                            fontSize: screenWidth * 0.05,
                                             letterSpacing: -2,
                                             color: Colors.white
                                         )
@@ -572,7 +567,7 @@ class _TabMainPageState extends State<TabMainPage> {
                               },
                               child: SizedBox(
                                 width: screenWidth * 0.325,
-                                height: screenWidth * 0.075,
+                                height: screenWidth * 0.1,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -582,8 +577,8 @@ class _TabMainPageState extends State<TabMainPage> {
                                     child: Text(
                                         "취소",
                                         style: TextStyle(
-                                            fontFamily: 'dream5',
-                                            fontSize: screenWidth * 0.04,
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.05,
                                             letterSpacing: -2,
                                             color: Colors.white
                                         )
@@ -771,11 +766,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedSubject == 'korean' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedSubject == '국어' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedSubject = 'korean';
+                                                  _selectedSubject = '국어';
                                                 });
                                               },
                                               child: Column(
@@ -813,11 +808,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedSubject == 'english' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedSubject == '영어' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedSubject = 'english';
+                                                  _selectedSubject = '영어';
                                                 });
                                               },
                                               child: Column(
@@ -855,11 +850,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedSubject == 'math' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedSubject == '수학' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedSubject = 'math';
+                                                  _selectedSubject = '수학';
                                                 });
                                               },
                                               child: Column(
@@ -897,11 +892,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedSubject == 'social' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedSubject == '사회' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedSubject = 'social';
+                                                  _selectedSubject = '사회';
                                                 });
                                               },
                                               child: Column(
@@ -945,11 +940,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedSubject == 'science' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedSubject == '과학' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedSubject = 'science';
+                                                  _selectedSubject = '과학';
                                                 });
                                               },
                                               child: Column(
@@ -987,11 +982,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedSubject == 'writing' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedSubject == '논술' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedSubject = 'writing';
+                                                  _selectedSubject = '논술';
                                                 });
                                               },
                                               child: Column(
@@ -1029,11 +1024,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedSubject == 'entertainment' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedSubject == '예체능' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedSubject = 'entertainment';
+                                                  _selectedSubject = '예체능';
                                                 });
                                               },
                                               child: Column(
@@ -1071,11 +1066,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedSubject == 'etc' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedSubject == '기타' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedSubject = 'etc';
+                                                  _selectedSubject = '기타';
                                                 });
                                               },
                                               child: Column(
@@ -1130,11 +1125,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedAge == '초등' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedAge == '초' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedAge = '초등';
+                                                  _selectedAge = '초';
                                                 });
                                               },
                                               child: Container(
@@ -1166,11 +1161,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedAge == '중등' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedAge == '중' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedAge = '중등';
+                                                  _selectedAge = '중';
                                                 });
                                               },
                                               child: Container(
@@ -1202,11 +1197,11 @@ class _TabMainPageState extends State<TabMainPage> {
                                           Flexible(
                                             flex: 1,
                                             child: RawMaterialButton(
-                                              fillColor: _selectedAge == '고등' ? highlightcolor : Colors.white,
+                                              fillColor: _selectedAge == '고' ? highlightcolor : Colors.white,
                                               elevation: 0,
                                               onPressed: (){
                                                 setState(() {
-                                                  _selectedAge = '고등';
+                                                  _selectedAge = '고';
                                                 });
                                               },
                                               child: Container(
@@ -1240,10 +1235,10 @@ class _TabMainPageState extends State<TabMainPage> {
                                   padding: EdgeInsets.all(screenWidth * 0.02),
                                   child: RawMaterialButton(
                                       onPressed: (){
-                                        String _selectedAddr = _selectedSido + ' ' + _selectedGungu + ' ' + _selectedDong;
                                         Navigator.push(
                                           context, MaterialPageRoute(
-                                            builder: (context) => SearchPage(_selectedAddr, _selectedSubject, _selectedAge)
+                                            builder: (context) => SearchPage(
+                                                _selectedSido, _selectedGungu, _selectedDong, _selectedSubject, _selectedAge)
                                           ),
                                         );
                                       },
