@@ -59,6 +59,9 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   // academy comment count
   int _commentCount = 0;
 
+  // already bookmarked?
+  bool _isBookmarked = false;
+
   // like for comment
   void _likeComment(AcademyComment cmt) async {
     final response = await http.post(
@@ -681,26 +684,67 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                           // padding
                                           SizedBox(height: screenWidth * 0.02),
 
-                                          // phone number
-                                          Text(
-                                              '설립자 : ' + widget._currentAcademy.founder,
-                                              style: TextStyle(
-                                                fontFamily: 'dream3',
-                                                fontSize: screenWidth * 0.04,
-                                                letterSpacing: -1,
-                                                color: Colors.black,
-                                              )
-                                          ),
+                                          // phone number, founder, bookmark button
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              // founder, phone number
+                                              SizedBox(
+                                                width: screenWidth * 0.6,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    // founder
+                                                    Text(
+                                                      '설립자 : ' + widget._currentAcademy.founder,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream3',
+                                                        fontSize: screenWidth * 0.04,
+                                                        letterSpacing: -1,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
 
-                                          // phone number
-                                          Text(
-                                              '전화번호 : ' + widget._currentAcademy.callnum,
-                                              style: TextStyle(
-                                                fontFamily: 'dream3',
-                                                fontSize: screenWidth * 0.04,
-                                                letterSpacing: -1,
-                                                color: Colors.black,
-                                              )
+                                                    // phone number
+                                                    Text(
+                                                        '전화번호 : ' + widget._currentAcademy.callnum,
+                                                        style: TextStyle(
+                                                          fontFamily: 'dream3',
+                                                          fontSize: screenWidth * 0.04,
+                                                          letterSpacing: -1,
+                                                          color: Colors.black,
+                                                        )
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              // bookmark guide text
+                                              Text(
+                                                '찜하기',
+                                                style: TextStyle(
+                                                  fontFamily: 'dream4',
+                                                  fontSize: screenWidth * 0.05,
+                                                  letterSpacing: -1,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+
+                                              // bookmark button
+                                              SizedBox(
+                                                height: screenWidth * 0.1,
+                                                width: screenWidth * 0.1,
+                                                child: RawMaterialButton(
+                                                  onPressed: (){},
+                                                  child: Icon(
+                                                    Icons.favorite_border,
+                                                    color: Colors.red,
+                                                  )
+                                                )
+                                              ),
+
+
+                                            ],
                                           ),
 
                                           // padding

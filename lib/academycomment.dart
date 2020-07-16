@@ -166,7 +166,8 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
                                       child: Container(
                                           color: bgcolor,
                                           child: Center(
-                                            child: Text("무슨무슨 이름이 매우매우매우매우매우긴 학원",
+                                            child: Text(
+                                                widget._currentAcademy.name,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
                                                     fontFamily: 'dream5',
