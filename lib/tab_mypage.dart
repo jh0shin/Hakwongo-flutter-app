@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:hwgo/academyinfo.dart';
+import 'package:hwgo/settings.dart';
+
+// user info bloc
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hwgo/bloc/userbloc.dart';
 
-import 'package:hwgo/settings.dart';
+// rest api request
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class MyInfoPage extends StatefulWidget {
   @override
@@ -11,7 +19,172 @@ class MyInfoPage extends StatefulWidget {
 
 class _MyInfoPageState extends State<MyInfoPage> {
 
-  String _loginUser = '';                                                       // logged in user information
+  // logged in user information
+  String _loginUser = '';
+
+  // offset
+  int _bookmarkOffset = 0;
+  int _commentOffset = 0;
+  int _limit = 3;
+
+  // whether item left
+  bool _isBookmarkLeft = true;
+  bool _isCommentLeft = true;
+
+  // bookmark and comment list
+  List<AcademyInfo> _bookmarkedAcademy = [];
+  List<BookmarkedAcademy> _myBookmark = [];
+  List<AcademyComment> _myComment = [];
+
+  // comment to Academy
+  AcademyInfo _commentAcademy;
+
+  // get user's comment
+  void _getMyComment() async {
+    final response = await http.post(
+      'http://hakwongo.com:3000/api2/comment/my',
+      body: {
+        'user' : _loginUser,
+        'limit' : _limit.toString(),
+        'offset' : _commentOffset.toString(),
+      }
+    );
+
+    final List<AcademyComment> parsedMyComment = jsonDecode(response.body)
+      .map<AcademyComment>((json) => AcademyComment.fromJSON(json))
+      .toList();
+    setState(() {
+      _myComment.clear();
+      _myComment.addAll(parsedMyComment);
+    });
+  }
+
+  // get user's more comment
+  void _getMoreMyComment() async {
+    _commentOffset += _limit;
+
+    final response = await http.post(
+      'http://hakwongo.com:3000/api2/comment/my',
+      body: {
+        'user' : _loginUser,
+        'limit' : _limit.toString(),
+        'offset' : _commentOffset.toString(),
+      }
+    );
+
+    if (response.body == '[]') {
+      setState(() {
+        _isCommentLeft = false;
+      });
+    } else {
+      final List<AcademyComment> parsedMyComment = jsonDecode(response.body)
+          .map<AcademyComment>((json) => AcademyComment.fromJSON(json))
+          .toList();
+      setState(() {
+        _myComment.addAll(parsedMyComment);
+      });
+    }
+  }
+
+  // get user's bookmark list
+  void _getMyBookmark() async {
+    final response = await http.post(
+      'http://hakwongo.com:3000/api2/bookmark/my',
+      body: {
+        'user' : _loginUser,
+        'limit' : _limit.toString(),
+        'offset' : _bookmarkOffset.toString(),
+      }
+    );
+
+    final List<BookmarkedAcademy> parsedMyAcademy = jsonDecode(response.body)
+      .map<BookmarkedAcademy>((json) => BookmarkedAcademy.fromJSON(json))
+      .toList();
+    _myBookmark.clear();
+    _myBookmark.addAll(parsedMyAcademy);
+
+    setState(() {
+      _bookmarkedAcademy.clear();
+      _myBookmark.forEach((bookmark) => _generateBookmarkList(bookmark));
+    });
+  }
+
+  // get user's bookmark list more
+  void _getMoreBookmark() async {
+    _bookmarkOffset += _limit;
+
+    final response = await http.post(
+      'http://hakwongo.com:3000/api2/bookmark/my',
+      body: {
+        'user' : _loginUser,
+        'limit' : _limit.toString(),
+        'offset' : _bookmarkOffset.toString(),
+      }
+    );
+
+    if (response.body == '[]') {
+      setState(() {
+        _isBookmarkLeft = false;
+      });
+    } else {
+      final List<BookmarkedAcademy> parsedMyAcademy = jsonDecode(response.body)
+          .map<BookmarkedAcademy>((json) => BookmarkedAcademy.fromJSON(json))
+          .toList();
+      _myBookmark.clear();
+      _myBookmark.addAll(parsedMyAcademy);
+
+      setState(() {
+        _myBookmark.forEach((bookmark) => _generateBookmarkList(bookmark));
+      });
+    }
+  }
+
+  // add _bookmarkedAcademy from _myBookmark info
+  void _generateBookmarkList(BookmarkedAcademy bookmark) async {
+    final response = await http.post(
+      'http://hakwongo.com:3000/api2/search/id',
+      body: {
+        'id' : bookmark.id.toString(),
+      }
+    );
+    final List<AcademyInfo> parsedAcademyInfo = jsonDecode(response.body)
+      .map<AcademyInfo>((json) => AcademyInfo.fromJSON(json))
+      .toList();
+
+    setState(() {
+      _bookmarkedAcademy.add(parsedAcademyInfo[0]);
+    });
+  }
+
+  // academy button clicked -> goto academy info page
+  void _academyClicked(AcademyInfo _selectedAcademy) {
+    Navigator.push(
+      context, MaterialPageRoute(
+        builder: (context) => AcademyInfoPage(_selectedAcademy)
+      )
+    ).then((value) { setState(() {}); });
+  }
+
+  // comment button clicked -> goto comment's academy info page
+  void _commentClicked(int academyID) async {
+    final response = await http.post(
+        'http://hakwongo.com:3000/api2/search/id',
+        body: {
+          'id' : academyID.toString(),
+        }
+    );
+    final List<AcademyInfo> parsedAcademyInfo = jsonDecode(response.body)
+        .map<AcademyInfo>((json) => AcademyInfo.fromJSON(json))
+        .toList();
+
+    Navigator.push(
+      context, MaterialPageRoute(
+        builder: (context) => AcademyInfoPage(parsedAcademyInfo[0])
+      )
+    ).then(
+        (value) { setState(() {}); }
+    );
+  }
 
   // Back Button Event controller
   Future<bool> _onBackPressed() {
@@ -134,6 +307,9 @@ class _MyInfoPageState extends State<MyInfoPage> {
     // get logged in user id from UserBloc
     _loginUser = BlocProvider.of<UserBloc>(context).currentState.toString()
         .split(",")[0].split(": ")[1];
+
+    _getMyBookmark();
+    _getMyComment();
   }
 
   Widget build(BuildContext context) => BlocBuilder<UserBloc, UserState>(
@@ -286,176 +462,109 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                 )
                                             ),
                                           ),
+                                        ]
 
-                                          // academy info(button)
-                                          SizedBox(
-                                              width: screenWidth * 0.9,
-                                              height: screenWidth * 0.2,
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                children: <Widget>[
-                                                  RawMaterialButton(
-                                                    onPressed: () {},
-                                                    child: Container(
-                                                        width: screenWidth * 0.9,
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            Flexible(
-                                                              flex: 1,
-                                                              child: Image.asset(
-                                                                // 1924 * 1462 px
-                                                                'assets/image/logo.png',
-                                                                width: screenWidth * 0.2,
-                                                                height: screenWidth * 0.15,
-                                                              ),
-                                                            ),
-
-                                                            Flexible(
-                                                                flex: 4,
-                                                                child: Column(
-                                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                  children: <Widget>[
-                                                                    // 학원 이름
-                                                                    Text(
-                                                                        "이룸수학 학원",
-                                                                        style: TextStyle(
-                                                                          fontFamily: 'dream5',
-                                                                          fontSize: screenWidth * 0.06,
-                                                                          letterSpacing: -2,
-                                                                          color: Colors.black,
-                                                                        )
-                                                                    ),
-
-                                                                    // 학원 주소
-                                                                    Text(
-                                                                        '경기도 수원시 영통구 반달로 7번길 6 센타프라자 6층 그리고 주소가 길어지면',
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: TextStyle(
-                                                                          fontFamily:  'dream3',
-                                                                          fontSize: screenWidth * 0.04,
-                                                                          letterSpacing: -2,
-                                                                          color: Colors.black45,
-                                                                        )
-                                                                    ),
-
-
-                                                                  ],
-                                                                )
-                                                            ),
-
-                                                          ],
-                                                        )
-                                                    ),
-                                                  ),
-
-                                                  // Contour line
-                                                  Container(
-                                                    width: screenWidth * 0.9,
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(width: 0.5, color: Colors.black12),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                          ),
-
-                                          // academy info(button)
-                                          SizedBox(
-                                              width: screenWidth * 0.9,
-                                              height: screenWidth * 0.2,
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                children: <Widget>[
-                                                  RawMaterialButton(
-                                                    onPressed: () {},
-                                                    child: Container(
-                                                      width: screenWidth * 0.9,
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          Flexible(
-                                                            flex: 1,
-                                                            child: Image.asset(
-                                                              // 1924 * 1462 px
-                                                              'assets/image/logo.png',
-                                                              width: screenWidth * 0.2,
-                                                              height: screenWidth * 0.15,
-                                                            ),
-                                                          ),
-
-                                                          Flexible(
-                                                              flex: 4,
-                                                              child: Column(
-                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                children: <Widget>[
-                                                                  // 학원 이름
-                                                                  Text(
-                                                                      "이이민민수수학학원원",
-                                                                      style: TextStyle(
-                                                                        fontFamily: 'dream5',
-                                                                        fontSize: screenWidth * 0.06,
-                                                                        letterSpacing: -2,
-                                                                        color: Colors.black,
-                                                                      )
+                                        // my bookmarked academy
+                                            + List.generate(_bookmarkedAcademy.length, (index) {
+                                              return SizedBox(
+                                                  width: screenWidth * 0.9,
+                                                  height: screenWidth * 0.2,
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                    children: <Widget>[
+                                                      RawMaterialButton(
+                                                        onPressed: () => _academyClicked(_bookmarkedAcademy[index]),
+                                                        child: Container(
+                                                            width: screenWidth * 0.9,
+                                                            child: Row(
+                                                              children: <Widget>[
+                                                                Flexible(
+                                                                  flex: 1,
+                                                                  child: Image.asset(
+                                                                    // 1924 * 1462 px
+                                                                    'assets/image/logo.png',
+                                                                    width: screenWidth * 0.2,
+                                                                    height: screenWidth * 0.15,
                                                                   ),
+                                                                ),
 
-                                                                  // 학원 주소
-                                                                  Text(
-                                                                      '경기도 성남시 분당구 수내1동 센타프라자 6층 그리고 주소가 길어지면',
-                                                                      overflow: TextOverflow.ellipsis,
-                                                                      style: TextStyle(
-                                                                        fontFamily:  'dream3',
-                                                                        fontSize: screenWidth * 0.04,
-                                                                        letterSpacing: -2,
-                                                                        color: Colors.black45,
-                                                                      )
-                                                                  ),
+                                                                Flexible(
+                                                                    flex: 4,
+                                                                    child: Column(
+                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                      children: <Widget>[
+                                                                        // 학원 이름
+                                                                        Text(
+                                                                            _bookmarkedAcademy[index].name,
+                                                                            style: TextStyle(
+                                                                              fontFamily: 'dream5',
+                                                                              fontSize: screenWidth * 0.055,
+                                                                              letterSpacing: -2,
+                                                                              color: Colors.black,
+                                                                            )
+                                                                        ),
+
+                                                                        // 학원 주소
+                                                                        Text(
+                                                                            _bookmarkedAcademy[index].addr,
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                            style: TextStyle(
+                                                                              fontFamily:  'dream3',
+                                                                              fontSize: screenWidth * 0.04,
+                                                                              letterSpacing: -2,
+                                                                              color: Colors.black45,
+                                                                            )
+                                                                        ),
 
 
-                                                                ],
-                                                              )
-                                                          ),
+                                                                      ],
+                                                                    )
+                                                                ),
 
-                                                        ],
+                                                              ],
+                                                            )
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
 
-                                                  // Contour line
-                                                  Container(
-                                                    width: screenWidth * 0.9,
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(width: 0.5, color: Colors.black12),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                          ),
+                                                      // Contour line
+                                                      Container(
+                                                        width: screenWidth * 0.9,
+                                                        decoration: BoxDecoration(
+                                                          border: Border.all(width: 0.5, color: Colors.black12),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                              );
+                                            })
 
+                                        + [
                                           // show more button
-                                          SizedBox(
+                                          _isBookmarkLeft
+                                            ? SizedBox(
                                               width: screenWidth * 0.9,
                                               height: screenWidth * 0.1,
                                               child: RawMaterialButton(
-                                                onPressed: () {},
+                                                onPressed: _getMoreBookmark,
                                                 child: Container(
                                                   alignment: Alignment.center,
                                                   width: screenWidth * 0.9,
                                                   padding: EdgeInsets.all(screenWidth * 0.02),
                                                   child: Text(
-                                                    "찜한 학원 더보기",
-                                                    style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.05,
-                                                      letterSpacing: -2,
-                                                      color: Colors.black,
-                                                    )
+                                                      "찜한 학원 더보기",
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream4',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
                                                   ),
                                                 ),
                                               )
-                                          ),
-                                        ],
+                                            )
+                                            : Container(),
+                                        ]
                                       )
                                     ),
                                   ),
@@ -490,141 +599,96 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                   )
                                               ),
                                             ),
+                                          ]
 
-                                            // exaple comment
-                                            SizedBox(
+                                          + List.generate(_myComment.length, (index) {
+                                            return SizedBox(
                                               width: screenWidth,
                                               child: Container(
                                                 padding: EdgeInsets.all(screenWidth * 0.02),
                                                 margin: EdgeInsets.only(bottom: screenWidth * 0.02),
                                                 color: commentcolor,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    // time and like
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                child: RawMaterialButton(
+                                                    onPressed: () => _commentClicked(_myComment[index].id),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: <Widget>[
-                                                        Text(
-                                                            '2020년 7월 10일',
-                                                            style: TextStyle(
-                                                              fontFamily: 'dream4',
-                                                              fontSize: screenWidth * 0.04,
-                                                              letterSpacing: -1,
-                                                              color: Colors.black45,
+                                                        // time and like information, delete and like button
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: <Widget>[
+                                                            // time
+                                                            Text(
+                                                                _myComment[index].time,
+                                                                style: TextStyle(
+                                                                  fontFamily: 'dream4',
+                                                                  fontSize: screenWidth * 0.04,
+                                                                  letterSpacing: -1,
+                                                                  color: Colors.black45,
+                                                                )
+                                                            ),
+
+                                                            // padding
+                                                            SizedBox(width: screenWidth * 0.2),
+
+                                                            // like
+                                                            SizedBox(
+                                                                width: screenWidth * 0.25,
+                                                                height: screenWidth * 0.04,
+                                                                child: Container(
+                                                                    alignment: Alignment.centerRight,
+                                                                    child: Text(
+                                                                        '좋아요 ' + _myComment[index].heart.toString() + '개',
+                                                                        style: TextStyle(
+                                                                          fontFamily: 'dream4',
+                                                                          fontSize: screenWidth * 0.04,
+                                                                          letterSpacing: -1,
+                                                                          color: Colors.black,
+                                                                        )
+                                                                    )
+                                                                )
+                                                            )
+                                                          ],
+                                                        ),
+
+                                                        // Contour Line
+                                                        Container(
+                                                          width: screenWidth * 0.9,
+                                                          margin: EdgeInsets.all(screenWidth * 0.01),
+                                                          decoration: BoxDecoration(
+                                                            border: Border.all(width: 0.5, color: Colors.black12),
+                                                          ),
+                                                        ),
+
+                                                        // comment
+                                                        Container(
+                                                            child: Text(
+                                                                _myComment[index].comment,
+                                                                textAlign: TextAlign.left,
+                                                                style: TextStyle(
+                                                                    fontFamily: 'dream4',
+                                                                    fontSize: screenWidth * 0.04,
+                                                                    letterSpacing: -1,
+                                                                    color: Colors.black
+                                                                )
                                                             )
                                                         ),
 
-                                                        Text(
-                                                            '좋아요 54개',
-                                                            style: TextStyle(
-                                                              fontFamily: 'dream4',
-                                                              fontSize: screenWidth * 0.04,
-                                                              letterSpacing: -1,
-                                                              color: Colors.black,
-                                                            )
-                                                        )
                                                       ],
-                                                    ),
-
-                                                    // Contour Line
-                                                    Container(
-                                                      width: screenWidth * 0.9,
-                                                      margin: EdgeInsets.all(screenWidth * 0.01),
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(width: 0.5, color: Colors.black12),
-                                                      ),
-                                                    ),
-
-                                                    // comment
-                                                    Container(
-                                                        child: Text(
-                                                            '사장님이 친절하고 음식이 맛있어요~',
-                                                            textAlign: TextAlign.left,
-                                                            style: TextStyle(
-                                                                fontFamily: 'dream4',
-                                                                fontSize: screenWidth * 0.04,
-                                                                letterSpacing: -1,
-                                                                color: Colors.black
-                                                            )
-                                                        )
-                                                    ),
-
-                                                  ],
+                                                    )
                                                 ),
                                               ),
-                                            ),
+                                            );
+                                          })
 
-                                            // exaple comment
-                                            SizedBox(
-                                              width: screenWidth,
-                                              child: Container(
-                                                padding: EdgeInsets.all(screenWidth * 0.02),
-                                                margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                                color: commentcolor,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    // time and like
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: <Widget>[
-                                                        Text(
-                                                            '2020년 7월 10일',
-                                                            style: TextStyle(
-                                                              fontFamily: 'dream4',
-                                                              fontSize: screenWidth * 0.04,
-                                                              letterSpacing: -1,
-                                                              color: Colors.black45,
-                                                            )
-                                                        ),
-
-                                                        Text(
-                                                            '좋아요 54개',
-                                                            style: TextStyle(
-                                                              fontFamily: 'dream4',
-                                                              fontSize: screenWidth * 0.04,
-                                                              letterSpacing: -1,
-                                                              color: Colors.black,
-                                                            )
-                                                        )
-                                                      ],
-                                                    ),
-
-                                                    // Contour Line
-                                                    Container(
-                                                      width: screenWidth * 0.9,
-                                                      margin: EdgeInsets.all(screenWidth * 0.01),
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(width: 0.5, color: Colors.black12),
-                                                      ),
-                                                    ),
-
-                                                    // comment
-                                                    Container(
-                                                        child: Text(
-                                                            '사장님이 친절하고 음식이 맛있어요~',
-                                                            textAlign: TextAlign.left,
-                                                            style: TextStyle(
-                                                                fontFamily: 'dream4',
-                                                                fontSize: screenWidth * 0.04,
-                                                                letterSpacing: -1,
-                                                                color: Colors.black
-                                                            )
-                                                        )
-                                                    ),
-
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-
+                                          + [
                                             // show more button
-                                            SizedBox(
+                                            _isCommentLeft
+                                              ? SizedBox(
                                                 width: screenWidth * 0.9,
                                                 height: screenWidth * 0.1,
                                                 child: RawMaterialButton(
-                                                  onPressed: () {},
+                                                  onPressed: _getMoreMyComment,
                                                   child: Container(
                                                     alignment: Alignment.center,
                                                     width: screenWidth * 0.9,
@@ -640,7 +704,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                     ),
                                                   ),
                                                 )
-                                            ),
+                                            )
+                                              : Container(),
                                           ],
                                         )
                                     ),

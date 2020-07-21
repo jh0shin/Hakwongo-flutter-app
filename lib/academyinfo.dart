@@ -20,6 +20,9 @@ import 'package:flutter_appavailability/flutter_appavailability.dart';
 // for phone call
 import 'package:url_launcher/url_launcher.dart';
 
+// recent search database
+import 'package:hwgo/database.dart';
+
 class AcademyInfoPage extends StatefulWidget {
   // Selected academy
   AcademyInfo _currentAcademy;
@@ -47,6 +50,9 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   String _xTransCoord = '';
   String _yTransCoord = '';
 
+  // class info limit
+  int _classLimit = 5;
+
   // comment input
   String _commentInput = '';
 
@@ -61,6 +67,266 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
 
   // already bookmarked?
   bool _isBookmarked = false;
+
+  // class infomation clicked -> show dialog and show detail
+  void _classInfoClicked(AcademyClass _class) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        double screenWidth = MediaQuery.of(context).size.width;
+
+        return Center(
+            child: SizedBox(
+              width: screenWidth * 0.8,
+              height: screenWidth * 1,
+              child: Container(
+                  padding: EdgeInsets.all(screenWidth * 0.02),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+
+                      Expanded(
+                        child: Material(
+                          child: Container(
+                            padding: EdgeInsets.all(screenWidth * 0.02),
+                            width: screenWidth,
+                            color: Colors.white,
+                            child: ListView(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              children: <Widget>[
+
+                                Text(
+                                    "강좌명 : " + _class.classname,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "대상 연령 : " + _class.age,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "정원 : " + _class.size,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "교습 기간 : " + _class.time,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "교습 시간 : " + _class.totaltime,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "교습비 : " + _class.cost1,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "모의고사비 : " + _class.cost2,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "재료비 : " + _class.cost3,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "급식비 : " + _class.cost4,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "기숙사비 : " + _class.cost5,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "차량비 : " + _class.cost6,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                                // padding
+                                SizedBox( height: screenWidth * 0.01 ),
+
+                                Text(
+                                    "피복비 : " + _class.cost7,
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                ),
+
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // okay button
+                      RawMaterialButton(
+                        onPressed: (){
+                          Navigator.pop(context, true);
+                        },
+                        child: SizedBox(
+                          width: screenWidth * 0.325,
+                          height: screenWidth * 0.1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              color: bgcolor,
+                            ),
+                            child: Center(
+                              child: Text(
+                                  "확인",
+                                  style: TextStyle(
+                                      fontFamily: 'dream4',
+                                      fontSize: screenWidth * 0.05,
+                                      letterSpacing: -2,
+                                      color: Colors.white
+                                  )
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+              ),
+            )
+        );
+      }
+    );
+  }
+
+  // check if current academy is already bookmarked
+  void _checkBookmark() async {
+    final response = await http.post(
+      'http://hakwongo.com:3000/api2/bookmark/check',
+      body: {
+        'user' : _currentUser,
+        'id' : widget._currentAcademy.id.toString(),
+      }
+    );
+
+    setState(() {
+      if (response.body == '[]') _isBookmarked = false;
+      else _isBookmarked = true;
+    });
+  }
+
+  // change bookmark status
+  void _changeBookmark() async {
+    final response = await http.post(
+      'http://hakwongo.com:3000/api2/bookmark/mark',
+      body: {
+        'type' : _isBookmarked ? 'delete' : 'add',
+        'user' : _currentUser,
+        'id' : widget._currentAcademy.id.toString(),
+      }
+    );
+
+    setState(() {
+      _isBookmarked = !_isBookmarked;
+    });
+  }
 
   // like for comment
   void _likeComment(AcademyComment cmt) async {
@@ -235,8 +501,8 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
         context: context,
         builder: (BuildContext context) {
 
-          print(_yCoordinate);
-          print(_xCoordinate);
+//          print(_yCoordinate);
+//          print(_xCoordinate);
 
           return WebviewScaffold(
             withJavascript: true,
@@ -263,7 +529,6 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
           "Authorization": _restAPIKey,
         }
     );
-    print(response.body);
 
     var _jsonDecodeData = jsonDecode(response.body)['documents'][0];
 
@@ -443,9 +708,13 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   @override
   void initState() {
     super.initState();
+
+    DBHelper().createData(widget._currentAcademy);
+
     _getClassInfo();
     _getComment();
     _getCommentNum();
+
 
     // http request for get map coordinate
     _xCoordinate = '';
@@ -463,6 +732,10 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
         double screenWidth = MediaQuery.of(context).size.width;
 
         if (state is UserFetched) {
+          if (_currentUser == null) {
+            _currentUser = state.user.id.toString();
+            _checkBookmark();
+          }
           _currentUser = state.user.id.toString();
         }
 
@@ -719,27 +992,41 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                                 ),
                                               ),
 
-                                              // bookmark guide text
-                                              Text(
-                                                '찜하기',
-                                                style: TextStyle(
-                                                  fontFamily: 'dream4',
-                                                  fontSize: screenWidth * 0.05,
-                                                  letterSpacing: -1,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
+
 
                                               // bookmark button
                                               SizedBox(
                                                 height: screenWidth * 0.1,
-                                                width: screenWidth * 0.1,
+                                                width: screenWidth * 0.25,
                                                 child: RawMaterialButton(
-                                                  onPressed: (){},
-                                                  child: Icon(
-                                                    Icons.favorite_border,
-                                                    color: Colors.red,
-                                                  )
+                                                  onPressed: _changeBookmark,
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: <Widget>[
+                                                      // bookmark guide text
+                                                      Text(
+                                                        _isBookmarked
+                                                          ? '담기 취소'
+                                                          : '학원 담기',
+                                                        style: TextStyle(
+                                                          fontFamily: 'dream4',
+                                                          fontSize: screenWidth * 0.05,
+                                                          letterSpacing: -1,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+
+                                                      _isBookmarked
+                                                        ? Icon(
+                                                          Icons.favorite,
+                                                          color: Colors.red,
+                                                        )
+                                                        : Icon(
+                                                          Icons.favorite_border,
+                                                          color: Colors.red,
+                                                        )
+                                                    ],
+                                                  ),
                                                 )
                                               ),
 
@@ -754,9 +1041,9 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                           Text(
                                               '강의 정보',
                                               style: TextStyle(
-                                                fontFamily: 'dream5',
-                                                fontSize: screenWidth * 0.05,
-                                                letterSpacing: -1,
+                                                fontFamily: 'dream4',
+                                                fontSize: screenWidth * 0.06,
+                                                letterSpacing: -2,
                                                 color: Colors.black,
                                               )
                                           ),
@@ -765,22 +1052,173 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                           SizedBox(height: screenWidth * 0.02),
                                         ]
                                         // class information
-                                        + List.generate(_classInfo.length, (index) {
+                                        + List.generate(_classInfo.length < _classLimit
+                                            ? _classInfo.length : _classLimit, (index) {
                                           AcademyClass tmp = _classInfo[index];
 
-                                          return Text(
-                                            tmp.classname + ',' + tmp.age + ',' + tmp.size + ',' + tmp.time + ','
-                                                + tmp.totaltime + ',' + tmp.cost1 + ',' + tmp.cost2 + ',' + tmp.cost3
-                                                + ',' + tmp.cost4 + ',' + tmp.cost5 + ',' + tmp.cost6 + ',' + tmp.cost7
-                                                + ',' + tmp.teacher,
-                                            style: TextStyle(
-                                              fontFamily: 'dream3',
-                                              fontSize: screenWidth * 0.04,
-                                              letterSpacing: -1,
-                                              color: Colors.black,
+                                          return Container(
+                                            padding: EdgeInsets.all(screenWidth * 0.02),
+                                            margin: EdgeInsets.only(bottom: screenWidth * 0.02),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                width: 1,
+                                                color: Colors.black26
+                                              ),
+                                              borderRadius: BorderRadius.circular(5),
+                                            ),
+                                            child: RawMaterialButton(
+                                              onPressed: () => _classInfoClicked(_classInfo[index]),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  // class name and age
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        tmp.classname,
+                                                        style: TextStyle(
+                                                          fontFamily: 'dream5',
+                                                          fontSize: screenWidth * 0.05,
+                                                          letterSpacing: -1,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+
+                                                      Text(
+                                                        tmp.age + '  ',
+                                                        style: TextStyle(
+                                                          fontFamily: 'dream3',
+                                                          fontSize: screenWidth * 0.04,
+                                                          letterSpacing: -1,
+                                                          color: Colors.black,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+
+                                                  // padding
+                                                  SizedBox(
+                                                    height: screenWidth * 0.02,
+                                                  ),
+
+                                                  // class time
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.access_time,
+                                                        size: screenWidth * 0.05,
+                                                      ),
+
+                                                      // padding
+                                                      SizedBox(
+                                                        width: screenWidth * 0.01,
+                                                      ),
+
+                                                      Text(
+                                                        (int.parse(tmp.totaltime) ~/ 60).toString() + '시간 ' + (int.parse(tmp.totaltime) % 60).toString()
+                                                            + '분 / ' + tmp.time,
+                                                        style: TextStyle(
+                                                          fontFamily: 'dream4',
+                                                          fontSize: screenWidth * 0.04,
+                                                          letterSpacing: -1,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+
+                                                  // padding
+                                                  SizedBox(
+                                                    height: screenWidth * 0.01,
+                                                  ),
+
+                                                  // class size, cost
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.person,
+                                                        size: screenWidth * 0.05,
+                                                      ),
+
+                                                      // padding
+                                                      SizedBox(
+                                                        width: screenWidth * 0.01,
+                                                      ),
+
+                                                      Text(
+                                                        tmp.size,
+                                                        style: TextStyle(
+                                                          fontFamily: 'dream4',
+                                                          fontSize: screenWidth * 0.04,
+                                                          letterSpacing: -1,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+
+                                                      // padding
+                                                      SizedBox(
+                                                        width: screenWidth * 0.03,
+                                                      ),
+
+                                                      Icon(
+                                                        Icons.attach_money,
+                                                        size: screenWidth * 0.05,
+                                                      ),
+
+                                                      // padding
+                                                      SizedBox(
+                                                        width: screenWidth * 0.01,
+                                                      ),
+
+                                                      Text(
+                                                        (int.parse(tmp.cost1)+ int.parse(tmp.cost2) + int.parse(tmp.cost3) + int.parse(tmp.cost4)
+                                                            + int.parse(tmp.cost5) + int.parse(tmp.cost6) + int.parse(tmp.cost7)).toString(),
+                                                        style: TextStyle(
+                                                          fontFamily: 'dream4',
+                                                          fontSize: screenWidth * 0.04,
+                                                          letterSpacing: -1,
+                                                          color: Colors.black,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ],
+                                              )
                                             )
                                           );
-                                            }),
+                                            })
+                                        + [
+                                          // show more class info button
+                                          _classLimit >= _classInfo.length
+                                            ? SizedBox()
+                                            : SizedBox(
+                                              width: screenWidth * 0.9,
+                                              height: screenWidth * 0.1,
+                                              child: RawMaterialButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _classLimit += 5;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  width: screenWidth * 0.9,
+                                                  padding: EdgeInsets.all(screenWidth * 0.02),
+                                                  child: Text(
+                                                      "학원 수업 정보 더보기",
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream4',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  ),
+                                                ),
+                                              )
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -941,106 +1379,107 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                 ]
                                 // comment get from server
                                 + List.generate(_academyComment.length, (index) {
-                                  return SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                      padding: EdgeInsets.all(screenWidth * 0.02),
-                                      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                      color: commentcolor,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          // time and like information, delete and like button
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      return SizedBox(
+                                        width: screenWidth,
+                                        child: Container(
+                                          padding: EdgeInsets.all(screenWidth * 0.02),
+                                          margin: EdgeInsets.only(bottom: screenWidth * 0.02),
+                                          color: commentcolor,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: <Widget>[
-                                              // time
-                                              Text(
-                                                  _academyComment[index].time,
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black45,
-                                                  )
-                                              ),
+                                              // time and like information, delete and like button
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: <Widget>[
+                                                  // time
+                                                  Text(
+                                                      _academyComment[index].time,
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream4',
+                                                        fontSize: screenWidth * 0.04,
+                                                        letterSpacing: -1,
+                                                        color: Colors.black45,
+                                                      )
+                                                  ),
 
-                                              // padding
-                                              SizedBox(width: screenWidth * 0.1),
+                                                  // padding
+                                                  SizedBox(width: screenWidth * 0.2),
 
-                                              // delete
-                                              _currentUser == _academyComment[index].user
-                                                ? SizedBox(
-                                                  width: screenWidth * 0.08,
-                                                  height: screenWidth * 0.04,
-                                                  child: RawMaterialButton(
-                                                      onPressed: () => _deleteComment(_academyComment[index]),
-                                                      child: Icon(
-                                                        Icons.delete,
-                                                        size: screenWidth * 0.04,
+                                                  // delete (my comment) or heart (other's comment)
+                                                  _currentUser == _academyComment[index].user
+                                                      ? SizedBox(
+                                                      width: screenWidth * 0.08,
+                                                      height: screenWidth * 0.04,
+                                                      child: RawMaterialButton(
+                                                          onPressed: () => _deleteComment(_academyComment[index]),
+                                                          child: Icon(
+                                                            Icons.delete,
+                                                            size: screenWidth * 0.04,
+                                                          )
                                                       )
                                                   )
-                                                )
-                                                : SizedBox(
-                                                  width: screenWidth * 0.08,
-                                                  height: screenWidth * 0.04,
+                                                      : SizedBox(
+                                                      width: screenWidth * 0.08,
+                                                      height: screenWidth * 0.04,
+                                                      child: RawMaterialButton(
+                                                          onPressed: () => _likeComment(_academyComment[index]),
+                                                          child: Icon(
+                                                              Icons.favorite,
+                                                              size: screenWidth * 0.04,
+                                                              color: Colors.red
+                                                          )
+                                                      )
+                                                  ),
+
+                                                  // like
+                                                  SizedBox(
+                                                      width: screenWidth * 0.25,
+                                                      height: screenWidth * 0.04,
+                                                      child: Container(
+                                                          alignment: Alignment.centerRight,
+                                                          child: Text(
+                                                              '좋아요 ' + _academyComment[index].heart.toString() + '개',
+                                                              style: TextStyle(
+                                                                fontFamily: 'dream4',
+                                                                fontSize: screenWidth * 0.04,
+                                                                letterSpacing: -1,
+                                                                color: Colors.black,
+                                                              )
+                                                          )
+                                                      )
+                                                  )
+                                                ],
+                                              ),
+
+                                              // Contour Line
+                                              Container(
+                                                width: screenWidth * 0.9,
+                                                margin: EdgeInsets.all(screenWidth * 0.01),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(width: 0.5, color: Colors.black12),
                                                 ),
+                                              ),
 
-                                              // like
-                                              SizedBox(
-                                                  width: screenWidth * 0.08,
-                                                  height: screenWidth * 0.04,
-                                                  child: RawMaterialButton(
-                                                      onPressed: () => _likeComment(_academyComment[index]),
-                                                      child: Icon(
-                                                        Icons.favorite,
-                                                        size: screenWidth * 0.04,
-                                                        color: Colors.red
+                                              // comment
+                                              Container(
+                                                  child: Text(
+                                                      _academyComment[index].comment,
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                          fontFamily: 'dream4',
+                                                          fontSize: screenWidth * 0.04,
+                                                          letterSpacing: -1,
+                                                          color: Colors.black
                                                       )
                                                   )
                                               ),
 
-                                              // like
-                                              Text(
-                                                  '좋아요 ' + _academyComment[index].heart.toString() + '개',
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream4',
-                                                    fontSize: screenWidth * 0.04,
-                                                    letterSpacing: -1,
-                                                    color: Colors.black,
-                                                  )
-                                              )
                                             ],
                                           ),
-
-                                          // Contour Line
-                                          Container(
-                                            width: screenWidth * 0.9,
-                                            margin: EdgeInsets.all(screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(width: 0.5, color: Colors.black12),
-                                            ),
-                                          ),
-
-                                          // comment
-                                          Container(
-                                              child: Text(
-                                                  _academyComment[index].comment,
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black
-                                                  )
-                                              )
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
+                                        ),
+                                      );
+                                    }),
                               ),
                             ),
                           ),

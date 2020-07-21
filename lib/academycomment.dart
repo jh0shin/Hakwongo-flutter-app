@@ -347,9 +347,9 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
                                                 ),
 
                                                 // padding
-                                                SizedBox(width: screenWidth * 0.1),
+                                                SizedBox(width: screenWidth * 0.2),
 
-                                                // delete
+                                                // delete (my comment) or heart (other's comment)
                                                 _currentUser == _academyComment[index].user
                                                     ? SizedBox(
                                                     width: screenWidth * 0.08,
@@ -363,12 +363,6 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
                                                     )
                                                 )
                                                     : SizedBox(
-                                                  width: screenWidth * 0.08,
-                                                  height: screenWidth * 0.04,
-                                                ),
-
-                                                // like
-                                                SizedBox(
                                                     width: screenWidth * 0.08,
                                                     height: screenWidth * 0.04,
                                                     child: RawMaterialButton(
@@ -382,14 +376,21 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
                                                 ),
 
                                                 // like
-                                                Text(
-                                                    '좋아요 ' + _academyComment[index].heart.toString() + '개',
-                                                    style: TextStyle(
-                                                      fontFamily: 'dream4',
-                                                      fontSize: screenWidth * 0.04,
-                                                      letterSpacing: -1,
-                                                      color: Colors.black,
+                                                SizedBox(
+                                                  width: screenWidth * 0.25,
+                                                  height: screenWidth * 0.04,
+                                                  child: Container(
+                                                    alignment: Alignment.centerRight,
+                                                    child: Text(
+                                                        '좋아요 ' + _academyComment[index].heart.toString() + '개',
+                                                        style: TextStyle(
+                                                          fontFamily: 'dream4',
+                                                          fontSize: screenWidth * 0.04,
+                                                          letterSpacing: -1,
+                                                          color: Colors.black,
+                                                        )
                                                     )
+                                                  )
                                                 )
                                               ],
                                             ),
