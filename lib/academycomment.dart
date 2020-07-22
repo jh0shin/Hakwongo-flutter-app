@@ -31,6 +31,7 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
 
   // academy comment list
   List<AcademyComment> _academyComment = [];
+  List<AcademyComment> _academyCommentBuffer = [];
 
   // list offset and limit
   int _offset = 0;
@@ -110,6 +111,7 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
     );
     if (response.body == '[]') {  // no more data
       setState(() {
+        _academyCommentBuffer.clear();
         _isCommentLeft = false;
       });
     } else {
@@ -117,7 +119,8 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
           .map<AcademyComment>((json) => AcademyComment.fromJSON(json))
           .toList();
       setState(() {
-        _academyComment.addAll(parsedAcademyComment);
+        _academyCommentBuffer.clear();
+        _academyCommentBuffer.addAll(parsedAcademyComment);
       });
     }
   }
@@ -126,6 +129,7 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
   void initState() {
     super.initState();
     _getComment();
+    _getMoreComment();
   }
 
   @override
@@ -434,7 +438,14 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
                                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                                         children: <Widget>[
                                           RawMaterialButton(
-                                            onPressed: _getMoreComment,
+                                            onPressed: () {
+                                              if (_academyCommentBuffer.length != 0) {
+                                                setState(() {
+                                                  _academyComment.addAll(_academyCommentBuffer);
+                                                });
+                                                _getMoreComment();
+                                              }
+                                            },
                                             child: Container(
                                                 width: screenWidth * 0.9,
                                                 child: Center(

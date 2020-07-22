@@ -34,10 +34,9 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // bookmark and comment list
   List<AcademyInfo> _bookmarkedAcademy = [];
   List<BookmarkedAcademy> _myBookmark = [];
+  List<BookmarkedAcademy> _myBookmarkBuffer = [];
   List<AcademyComment> _myComment = [];
-
-  // comment to Academy
-  AcademyInfo _commentAcademy;
+  List<AcademyComment> _myCommentBuffer = [];
 
   // get user's comment
   void _getMyComment() async {
@@ -74,6 +73,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
 
     if (response.body == '[]') {
       setState(() {
+        _myCommentBuffer.clear();
         _isCommentLeft = false;
       });
     } else {
@@ -81,7 +81,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
           .map<AcademyComment>((json) => AcademyComment.fromJSON(json))
           .toList();
       setState(() {
-        _myComment.addAll(parsedMyComment);
+        _myCommentBuffer.clear();
+        _myCommentBuffer.addAll(parsedMyComment);
       });
     }
   }
@@ -124,18 +125,19 @@ class _MyInfoPageState extends State<MyInfoPage> {
 
     if (response.body == '[]') {
       setState(() {
+        _myBookmarkBuffer.clear();
         _isBookmarkLeft = false;
       });
     } else {
       final List<BookmarkedAcademy> parsedMyAcademy = jsonDecode(response.body)
           .map<BookmarkedAcademy>((json) => BookmarkedAcademy.fromJSON(json))
           .toList();
-      _myBookmark.clear();
-      _myBookmark.addAll(parsedMyAcademy);
+      _myBookmarkBuffer.clear();
+      _myBookmarkBuffer.addAll(parsedMyAcademy);
 
-      setState(() {
-        _myBookmark.forEach((bookmark) => _generateBookmarkList(bookmark));
-      });
+//      setState(() {
+//        _myBookmark.forEach((bookmark) => _generateBookmarkList(bookmark));
+//      });
     }
   }
 
@@ -309,7 +311,9 @@ class _MyInfoPageState extends State<MyInfoPage> {
         .split(",")[0].split(": ")[1];
 
     _getMyBookmark();
+    _getMoreBookmark();
     _getMyComment();
+    _getMoreMyComment();
   }
 
   Widget build(BuildContext context) => BlocBuilder<UserBloc, UserState>(
@@ -546,7 +550,14 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                               width: screenWidth * 0.9,
                                               height: screenWidth * 0.1,
                                               child: RawMaterialButton(
-                                                onPressed: _getMoreBookmark,
+                                                onPressed: () {
+                                                  if (_myBookmarkBuffer.length != 0) {
+                                                    setState(() {
+                                                      _myBookmarkBuffer.forEach((bookmark) => _generateBookmarkList(bookmark));
+                                                    });
+                                                    _getMoreBookmark();
+                                                  }
+                                                },
                                                 child: Container(
                                                   alignment: Alignment.center,
                                                   width: screenWidth * 0.9,
@@ -563,7 +574,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                 ),
                                               )
                                             )
-                                            : Container(),
+                                            : SizedBox(),
                                         ]
                                       )
                                     ),
@@ -688,7 +699,14 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                 width: screenWidth * 0.9,
                                                 height: screenWidth * 0.1,
                                                 child: RawMaterialButton(
-                                                  onPressed: _getMoreMyComment,
+                                                  onPressed: (){
+                                                    if (_myCommentBuffer.length != 0) {
+                                                      setState(() {
+                                                        _myComment.addAll(_myCommentBuffer);
+                                                      });
+                                                      _getMoreMyComment();
+                                                    }
+                                                  },
                                                   child: Container(
                                                     alignment: Alignment.center,
                                                     width: screenWidth * 0.9,
@@ -705,7 +723,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                   ),
                                                 )
                                             )
-                                              : Container(),
+                                              : SizedBox(),
                                           ],
                                         )
                                     ),

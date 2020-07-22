@@ -30,6 +30,7 @@ class _SearchPageState extends State<SearchPage> {
 
   // search result
   List<AcademyInfo> _searchResult = [];
+  List<AcademyInfo> _searchResultBuffer = [];
 
   // search result offset
   int _offset = 0;
@@ -81,6 +82,7 @@ class _SearchPageState extends State<SearchPage> {
     print(response.body);
     if (response.body == '[]') {  // no more data
       setState(() {
+        _searchResultBuffer.clear();
         _moreResultLeft = false;
       });
     } else {                      // more data exists
@@ -88,7 +90,8 @@ class _SearchPageState extends State<SearchPage> {
           .map<AcademyInfo>((json) => AcademyInfo.fromJSON(json))
           .toList();
       setState(() {
-        _searchResult.addAll(parsedSearchResult);
+        _searchResultBuffer.clear();
+        _searchResultBuffer.addAll(parsedSearchResult);
       });
     }
   }
@@ -106,6 +109,7 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     _getSearchResult();
+    _getMoreSearchResult();
   }
 
   @override
@@ -186,8 +190,8 @@ class _SearchPageState extends State<SearchPage> {
                                 child: Center(
                                     child: Text(
                                       '필터 :   ' + widget._selectedSido + ' ' + widget._selectedGungu + ' '
-                                          + widget._selectedDong + ',   ' + widget._selectedSubject + ',   '
-                                          + widget._selectedAge,
+                                          + widget._selectedDong + '   /   ' + widget._selectedSubject + '   /   '
+                                          + widget._selectedAge + '등',
                                       style: TextStyle(
                                         fontFamily: 'dream5',
                                         fontSize: screenWidth * 0.038,
@@ -302,7 +306,14 @@ class _SearchPageState extends State<SearchPage> {
                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: <Widget>[
                                       RawMaterialButton(
-                                        onPressed: _getMoreSearchResult,
+                                        onPressed: () {
+                                          if (_searchResultBuffer.length != 0) {
+                                            setState(() {
+                                              _searchResult.addAll(_searchResultBuffer);
+                                            });
+                                            _getMoreSearchResult();
+                                          }
+                                        },
                                         child: Container(
                                             width: screenWidth * 0.9,
                                             child: Center(
@@ -321,7 +332,7 @@ class _SearchPageState extends State<SearchPage> {
                                     ],
                                   )
                               )
-                                : Container()
+                                : SizedBox()
                               ]
                         ),
                       ),

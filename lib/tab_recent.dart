@@ -16,6 +16,7 @@ class _RecentPageState extends State<RecentPage> {
   int _limit = 5;
   bool _isResultLeft = true;
   List<AcademyInfo> _recentAcademy = [];
+  List<AcademyInfo> _recentAcademyBuffer = [];
 
   // academy button clicked -> goto academy info page
   void _academyClicked(AcademyInfo _selectedAcademy) {
@@ -33,11 +34,13 @@ class _RecentPageState extends State<RecentPage> {
     print(_tmp);
     if (_tmp.length == 0) {
       setState(() {
+        _recentAcademyBuffer.clear();
         _isResultLeft = false;
       });
     } else {
       setState(() {
-        _recentAcademy.addAll(_tmp);
+        _recentAcademyBuffer.clear();
+        _recentAcademyBuffer.addAll(_tmp);
       });
     }
   }
@@ -169,7 +172,10 @@ class _RecentPageState extends State<RecentPage> {
             builder: (BuildContext context, AsyncSnapshot<List<AcademyInfo>> snapshot) {
 
               if (snapshot.hasData) {
-                if (_recentAcademy.length == 0) _recentAcademy.addAll(snapshot.data);
+                if (_recentAcademy.length == 0) {
+                  _recentAcademy.addAll(snapshot.data);
+                  _getMoreRecentAcademy();
+                }
 
                 return Container(
                     child: Column(
@@ -350,7 +356,14 @@ class _RecentPageState extends State<RecentPage> {
                                               width: screenWidth * 0.9,
                                               height: screenWidth * 0.1,
                                               child: RawMaterialButton(
-                                                onPressed: _getMoreRecentAcademy,
+                                                onPressed: () {
+                                                  if (_recentAcademyBuffer.length != 0) {
+                                                    setState(() {
+                                                      _recentAcademy.addAll(_recentAcademyBuffer);
+                                                    });
+                                                    _getMoreRecentAcademy();
+                                                  }
+                                                },
                                                 child: Container(
                                                   alignment: Alignment.center,
                                                   width: screenWidth * 0.9,

@@ -8,6 +8,8 @@ import 'package:kakao_flutter_sdk/user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hwgo/bloc/userbloc.dart';
 
+import 'package:hwgo/settings.dart';
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -68,27 +70,43 @@ class _LoginPageState extends State<LoginPage> {
       isKakaoTalkInstalled();
 
       return Material(
-        child: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                InkWell(
-                  child: Image.asset(
-                    'assets/image/kakao_login_btn.png',
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: MediaQuery.of(context).size.width * 0.8 * (49 / 300),
-                  ),
-                  onTap: () {
-                    _loginWithKakao();
-                  }
-                ),
-                Padding(
-                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+        child: Container(
+            color: bgcolor,
+            child: SafeArea(
+                child: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Image.asset(
+                            // logo image
+                            // image size : 1924 * 1462 px
+                            'assets/image/logo.png',
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            height: MediaQuery.of(context).size.width * 0.5 * (1462 / 1924),
+                          ),
+
+                          // padding
+                          SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.3
+                          ),
+
+                          InkWell(
+                              child: Image.asset(
+                                'assets/image/kakao_login_btn.png',
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                height: MediaQuery.of(context).size.width * 0.8 * (49 / 300),
+                              ),
+                              onTap: () {
+                                _loginWithKakao();
+                              }
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+                          )
+                        ]
+                    )
                 )
-              ]
             )
-          )
         )
       );
     }

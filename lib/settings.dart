@@ -13,8 +13,6 @@ class AcademyInfo {
   final String addr;      // 학원 주소
   final String founder;   // 학원 설립자
   final String callnum;   // 학원 전화번호
-  final String age;       // 연령대
-  final String subject;   // 과목
 
   // constructor
   AcademyInfo({
@@ -23,8 +21,6 @@ class AcademyInfo {
     this.addr,
     this.founder,
     this.callnum,
-    this.age,
-    this.subject,
   });
 
   // factory constructor
@@ -35,8 +31,6 @@ class AcademyInfo {
       addr : json['addr'],
       founder : json['founder'],
       callnum : json['callnum'],
-      age : json['age'],
-      subject : json['subject'],
     );
   }
 }

@@ -485,6 +485,85 @@ class _TabMainPageState extends State<TabMainPage> {
     );
   }
 
+  // no location selected
+  void _noLocationSelected() {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          double screenWidth = MediaQuery.of(context).size.width;
+
+          return Center(
+              child: SizedBox(
+                width: screenWidth * 0.7,
+                height: screenWidth * 0.5,
+                child: Container(
+                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        // space
+                        SizedBox(height: screenWidth * 0.11),
+
+                        // Guide Text
+                        Material(
+                            child: Container(
+                                color: Colors.white,
+                                child: Text(
+                                    "지역을 먼저 선택해주세요.",
+                                    style: TextStyle(
+                                        fontFamily: 'dream5',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.black
+                                    )
+                                )
+                            )
+                        ),
+
+                        // space
+                        SizedBox(height: screenWidth * 0.11),
+
+                        // button
+                        RawMaterialButton(
+                          onPressed: (){
+                            Navigator.pop(context, true);
+                          },
+                          child: SizedBox(
+                            width: screenWidth * 0.325,
+                            height: screenWidth * 0.1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                                color: bgcolor,
+                              ),
+                              child: Center(
+                                child: Text(
+                                    "확인",
+                                    style: TextStyle(
+                                        fontFamily: 'dream4',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.white
+                                    )
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                ),
+              )
+          );
+        }
+    );
+  }
+
   // Back Button Event controller
   Future<bool> _onBackPressed() {
     return showDialog(
@@ -1235,7 +1314,8 @@ class _TabMainPageState extends State<TabMainPage> {
                                   padding: EdgeInsets.all(screenWidth * 0.02),
                                   child: RawMaterialButton(
                                       onPressed: (){
-                                        Navigator.push(
+                                        if (_selectedSido == '') _noLocationSelected();
+                                        else Navigator.push(
                                           context, MaterialPageRoute(
                                             builder: (context) => SearchPage(
                                                 _selectedSido, _selectedGungu, _selectedDong, _selectedSubject, _selectedAge)

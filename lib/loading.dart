@@ -43,22 +43,22 @@ class _LoadingPageState extends State<LoadingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
+    return Container(
         color: _bgcolor,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              // logo image
-              // image size : 1924 * 1462 px
-              'assets/image/logo.png',
-              width: MediaQuery.of(context).size.width * 0.5,
-              height: MediaQuery.of(context).size.width * 0.5 * (1462 / 1924),
+        child: SafeArea(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    // logo image
+                    // image size : 1924 * 1462 px
+                    'assets/image/logo.png',
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    height: MediaQuery.of(context).size.width * 0.5 * (1462 / 1924),
+                  )
+                ]
             )
-          ]
         )
-      )
     );
   }
 }

@@ -36,8 +36,6 @@ class DBHelper {
             addr varchar(200),
             founder varchar(40),
             callnum varchar(20),
-            age varchar(20),
-            subject varchar(20)
           )
         ''');
       },
@@ -50,11 +48,10 @@ class DBHelper {
   createData(AcademyInfo academy) async {
     final db = await database;
     var res = await db.rawInsert('''
-      insert into hakwon (id, name, addr, founder, callnum, age, subject)
-      values (?, ?, ?, ?, ?, ?, ?)
+      insert into hakwon (id, name, addr, founder, callnum)
+      values (?, ?, ?, ?, ?)
       ''',
-      [academy.id, academy.name, academy.addr, academy.founder, academy.callnum,
-        academy.age, academy.subject]
+      [academy.id, academy.name, academy.addr, academy.founder, academy.callnum]
     );
     return res;
   }
@@ -62,7 +59,7 @@ class DBHelper {
   // Read all
   Future<List<AcademyInfo>> getAllData(int offset, int limit) async {
     final db = await database;
-    var res = await db.rawQuery('select * from hakwon limit ?, ?',
+    var res = await db.rawQuery('select distinct id, name, addr, founder, callnum from hakwon limit ?, ?',
     [offset, limit]);
     List<AcademyInfo> list = res.isNotEmpty
       ? res.map((item) => AcademyInfo.fromJSON(item)).toList()

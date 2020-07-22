@@ -1,4 +1,4 @@
-package com.example.hwgo
+package com.hwgo.hwgo
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

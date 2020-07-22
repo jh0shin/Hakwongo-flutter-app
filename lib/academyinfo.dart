@@ -68,6 +68,9 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   // already bookmarked?
   bool _isBookmarked = false;
 
+  // init textfield controller
+  TextEditingController _controller = TextEditingController();
+
   // class infomation clicked -> show dialog and show detail
   void _classInfoClicked(AcademyClass _class) {
     showDialog(
@@ -403,7 +406,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                           // space
                           SizedBox(height: screenWidth * 0.08),
 
-                          // phone number
+                          // guide text
                           Material(
                               child: Container(
                                   color: Colors.white,
@@ -472,7 +475,88 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
         _getComment();
         _getCommentNum();
       });
-    }
+
+      _controller.clear();
+      
+      // complete dialog
+      showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            double screenWidth = MediaQuery.of(context).size.width;
+
+            return Center(
+                child: SizedBox(
+                  width: screenWidth * 0.7,
+                  height: screenWidth * 0.4,
+                  child: Container(
+                      padding: EdgeInsets.all(screenWidth * 0.02),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          // space
+                          SizedBox(height: screenWidth * 0.08),
+
+                          // guide text
+                          Material(
+                              child: Container(
+                                  color: Colors.white,
+                                  child: Text(
+                                      "댓글이 등록되었습니다.",
+                                      style: TextStyle(
+                                          fontFamily: 'dream4',
+                                          fontSize: screenWidth * 0.05,
+                                          letterSpacing: -2,
+                                          color: Colors.black
+                                      )
+                                  )
+                              )
+                          ),
+
+                          // space
+                          SizedBox(height: screenWidth * 0.08),
+
+                          // button
+                          // call
+                          RawMaterialButton(
+                            onPressed: (){
+                              // TODO : create calling method
+                              Navigator.pop(context);
+                            },
+                            child: SizedBox(
+                              width: screenWidth * 0.325,
+                              height: screenWidth * 0.1,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                                  color: bgcolor,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                      "확인",
+                                      style: TextStyle(
+                                          fontFamily: 'dream4',
+                                          fontSize: screenWidth * 0.05,
+                                          letterSpacing: -2,
+                                          color: Colors.white
+                                      )
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                  ),
+                )
+            );
+          }
+      );
+    }    
   }
 
   // get comment list
@@ -574,7 +658,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   }
 
   // calling button clicked
-  void _callButtonClicked() {
+  void _callButtonClicked(String telnum) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -602,7 +686,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                     child: Container(
                       color: Colors.white,
                       child: Text(
-                          "010-4803-3704",
+                          telnum,
                           style: TextStyle(
                               fontFamily: 'dream3',
                               fontSize: screenWidth * 0.06,
@@ -639,8 +723,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                       // call
                       RawMaterialButton(
                         onPressed: (){
-                          // TODO : create calling method
-                          launch("tel://01048033704");
+                          launch("tel://" + telnum);
                           Navigator.pop(context);
                         },
                         child: SizedBox(
@@ -1322,6 +1405,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                                         borderRadius: BorderRadius.circular(5),
                                                       ),
                                                       child: TextField(
+                                                        controller: _controller,
                                                         keyboardType: TextInputType.multiline,
                                                         maxLines: null,
                                                         maxLength: 300,
@@ -1493,7 +1577,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
 
                           // call button
                           RawMaterialButton(
-                            onPressed: _callButtonClicked,
+                            onPressed: () => _callButtonClicked(widget._currentAcademy.callnum),
                             child: SizedBox(
                                 width: screenWidth * 0.75,
                                 height: screenWidth * 0.15,
