@@ -31,7 +31,6 @@ class _RecentPageState extends State<RecentPage> {
   void _getMoreRecentAcademy() async {
     _offset += _limit;
     List<AcademyInfo> _tmp = await DBHelper().getAllData(_offset, _limit);
-    print(_tmp);
     if (_tmp.length == 0) {
       setState(() {
         _recentAcademyBuffer.clear();
@@ -228,10 +227,11 @@ class _RecentPageState extends State<RecentPage> {
                                         children: [
                                           SizedBox(
                                               width: screenWidth,
-                                              height: screenWidth * 0.12,
+                                              height: screenWidth * 0.14,
                                               child: Container(
                                                 color: Colors.white,
                                                 child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
                                                   children: <Widget>[
                                                     RawMaterialButton(
                                                       onPressed: () {
@@ -246,7 +246,10 @@ class _RecentPageState extends State<RecentPage> {
                                                         child: Row(
                                                           mainAxisAlignment: MainAxisAlignment.center,
                                                           children: <Widget>[
-                                                            Icon(Icons.search),
+                                                            Icon(
+                                                              Icons.search,
+                                                              size: screenWidth * 0.05
+                                                            ),
 
                                                             Text(
                                                                 "검색 기록 삭제",

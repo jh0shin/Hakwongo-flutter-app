@@ -35,7 +35,7 @@ class DBHelper {
             name varchar(80),
             addr varchar(200),
             founder varchar(40),
-            callnum varchar(20),
+            callnum varchar(20)
           )
         ''');
       },

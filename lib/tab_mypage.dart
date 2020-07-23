@@ -49,6 +49,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
       }
     );
 
+    print(response.body);
+
     final List<AcademyComment> parsedMyComment = jsonDecode(response.body)
       .map<AcademyComment>((json) => AcademyComment.fromJSON(json))
       .toList();
@@ -164,7 +166,9 @@ class _MyInfoPageState extends State<MyInfoPage> {
       context, MaterialPageRoute(
         builder: (context) => AcademyInfoPage(_selectedAcademy)
       )
-    ).then((value) { setState(() {}); });
+    ).then((value) {
+      initState();
+    });
   }
 
   // comment button clicked -> goto comment's academy info page
@@ -184,7 +188,12 @@ class _MyInfoPageState extends State<MyInfoPage> {
         builder: (context) => AcademyInfoPage(parsedAcademyInfo[0])
       )
     ).then(
-        (value) { setState(() {}); }
+      (value) {
+        print(_loginUser);
+        print(_limit);
+        print(_commentOffset);
+        _getMyComment();
+      }
     );
   }
 

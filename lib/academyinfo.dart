@@ -325,11 +325,11 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
         'id' : widget._currentAcademy.id.toString(),
       }
     );
-
     setState(() {
       _isBookmarked = !_isBookmarked;
     });
   }
+
 
   // like for comment
   void _likeComment(AcademyComment cmt) async {
@@ -679,7 +679,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   // space
-                  SizedBox(height: screenWidth * 0.11),
+                  SizedBox(height: screenWidth * 0.1),
 
                   // phone number
                   Material(
@@ -714,7 +714,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                   ),
 
                   // space
-                  SizedBox(height: screenWidth * 0.11),
+                  SizedBox(height: screenWidth * 0.1),
 
                   // button
                   Row(
@@ -1103,10 +1103,12 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                                         ? Icon(
                                                           Icons.favorite,
                                                           color: Colors.red,
+                                                          size: screenWidth * 0.05
                                                         )
                                                         : Icon(
                                                           Icons.favorite_border,
                                                           color: Colors.red,
+                                                          size: screenWidth * 0.05,
                                                         )
                                                     ],
                                                   ),

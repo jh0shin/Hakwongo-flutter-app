@@ -27,7 +27,10 @@ dependencies:
 
   # kakao map
   flutter_webview_plugin: ^0.3.10+1
-  flutter_appavailability: ^0.0.21
+  flutter_appavailability:
+    git:
+      url: "https://github.com/bwhiteTP/flutter_appavailability.git"
+      ref: "26461d5296cd8c0a58da1d9c5f1e960643ebb323"
 
   # tab_main advertise slider
   carousel_slider: ^1.4.1

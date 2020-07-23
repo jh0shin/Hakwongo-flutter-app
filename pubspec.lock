@@ -107,9 +107,11 @@ packages:
   flutter_appavailability:
     dependency: "direct main"
     description:
-      name: flutter_appavailability
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: "26461d5296cd8c0a58da1d9c5f1e960643ebb323"
+      resolved-ref: "26461d5296cd8c0a58da1d9c5f1e960643ebb323"
+      url: "https://github.com/bwhiteTP/flutter_appavailability.git"
+    source: git
     version: "0.0.21"
   flutter_bloc:
     dependency: "direct main"
