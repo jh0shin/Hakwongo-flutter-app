@@ -585,14 +585,11 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
         context: context,
         builder: (BuildContext context) {
 
-//          print(_yCoordinate);
-//          print(_xCoordinate);
-
           return WebviewScaffold(
             withJavascript: true,
             enableAppScheme: true,
             geolocationEnabled: true,
-            url: 'https://map.kakao.com/link/map/' + widget._currentAcademy.name + ',' + _yCoordinate +',' +_xCoordinate,
+            url: Uri.encodeFull('https://map.kakao.com/link/map/' + widget._currentAcademy.name + ',' + _yCoordinate +',' +_xCoordinate),
           );
         }
     );
@@ -932,6 +929,26 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                                 }
                                               }
                                               // TODO: ADD PLATFORM == IOS CASE
+                                              if (Platform.isIOS) {
+                                                try {
+                                                  // check if app is enabled
+                                                  // if PlatformException occur, goto appstore install page
+                                                  print(await AppAvailability.checkAvailability("daummaps://"));
+
+                                                  // no PlatformException occured
+                                                  if (await canLaunch(url)) {
+                                                    Navigator.pop(context);
+                                                    await launch(url);
+                                                  } else {
+                                                    throw 'Could not launch $url';
+                                                  }
+                                                } on PlatformException {
+                                                  Navigator.pop(context);
+                                                  // TODO : check on physical device
+                                                  await launch('https://itunes.apple.com/app/id304608425');
+                                                  // await launch('https://apps.apple.com/app/id304608425');
+                                                }
+                                              }
                                             }
                                           });
                                         },
