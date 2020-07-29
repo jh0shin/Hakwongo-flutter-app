@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:hwgo/tab_main.dart';
 import 'package:hwgo/tab_mypage.dart';
 import 'package:hwgo/tab_recent.dart';
+import 'package:hwgo/tab_service.dart';
+
+import 'package:hwgo/settings.dart';
 
 class TabPage extends StatefulWidget {
   @override
@@ -10,16 +13,13 @@ class TabPage extends StatefulWidget {
 }
 
 class _TabPageState extends State<TabPage> {
-  // background color
-  Color _bgcolor = const Color(0xFF504f4b);
-  Color _highlight = const Color(0xFFfff2cc);
-  Color _btncolor = const Color(0xFF353430);
 
   int _selectedIndex = 0;
 
   List _pages = [
     TabMainPage(),
     RecentPage(),
+    ServicePage(),
     MyInfoPage()
   ];
 
@@ -34,17 +34,21 @@ class _TabPageState extends State<TabPage> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: _bgcolor,
+      backgroundColor: bgcolor,
       body: SafeArea(
         child: Center(child: _pages[_selectedIndex]),
       ),
       bottomNavigationBar: BottomNavigationBar(
         fixedColor: Colors.black,
+        unselectedItemColor: Colors.black45,
         onTap: _onItemTapped,
         currentIndex: _selectedIndex,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(
+              Icons.home,
+              size: screenWidth * 0.05
+            ),
             title: Text(
               '메인',
               style: TextStyle(
@@ -56,7 +60,10 @@ class _TabPageState extends State<TabPage> {
             )
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
+            icon: Icon(
+              Icons.access_time,
+              size: screenWidth * 0.05
+            ),
             title: Text(
               '최근검색',
               style: TextStyle(
@@ -68,7 +75,19 @@ class _TabPageState extends State<TabPage> {
             )
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
+              icon: Icon(Icons.shopping_cart, size: screenWidth * 0.05),
+              title: Text(
+                  '서비스',
+                  style: TextStyle(
+                    fontFamily: 'dream5',
+                    fontSize: screenWidth * 0.035,
+                    letterSpacing: -1,
+                    color: Colors.black,
+                  )
+              )
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle, size: screenWidth * 0.05),
             title: Text(
               '마이페이지',
               style: TextStyle(
