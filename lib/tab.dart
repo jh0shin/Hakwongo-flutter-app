@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:hwgo/tab_main.dart';
-import 'package:hwgo/tab_mypage.dart';
-import 'package:hwgo/tab_recent.dart';
-import 'package:hwgo/tab_service.dart';
+import 'package:hwgo/tab/tab_recent.dart';
+import 'package:hwgo/tab/tab_main.dart';
+import 'package:hwgo/tab/tab_mypage.dart';
+import 'package:hwgo/tab/tab_service.dart';
 
 import 'package:hwgo/settings.dart';
 

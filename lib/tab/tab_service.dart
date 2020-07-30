@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:hwgo/settings.dart';
-import 'package:hwgo/payment.dart';
+import 'file:///C:/Users/jh0sh/Desktop/Github/hwgo/lib/pay/payment.dart';
 import 'package:hwgo/learningtest.dart';
 
 class ServicePage extends StatefulWidget {

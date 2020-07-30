@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/services.dart' show rootBundle;
+
+import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hwgo/settings.dart';
@@ -9,8 +14,13 @@ class LearningTestPage extends StatefulWidget {
 
 class _LearningTestPageState extends State<LearningTestPage> {
 
+  List<List> fields;
+  String input;
+
   // Back Button Event controller
   Future<bool> _onBackPressed() {
+    print(input);
+
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -31,14 +41,15 @@ class _LearningTestPageState extends State<LearningTestPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         // space
-                        SizedBox(height: screenWidth * 0.11),
+                        SizedBox(height: screenWidth * 0.05),
 
                         // Guide Text
                         Material(
                             child: Container(
                                 color: Colors.white,
                                 child: Text(
-                                    "학원고를 종료하시겠습니까?",
+                                    "검사를 종료하시겠습니까?\n검사를 도중에 그만두면 결과가 저장되지 않습니다.",
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontFamily: 'dream5',
                                         fontSize: screenWidth * 0.05,
@@ -50,7 +61,7 @@ class _LearningTestPageState extends State<LearningTestPage> {
                         ),
 
                         // space
-                        SizedBox(height: screenWidth * 0.11),
+                        SizedBox(height: screenWidth * 0.05),
 
                         // button
                         Row(
@@ -121,6 +132,17 @@ class _LearningTestPageState extends State<LearningTestPage> {
           );
         }
     );
+  }
+
+  void _getFields() async {
+    input = await rootBundle.loadString('assets/learningtest.csv');
+    fields = CsvToListConverter().convert(input);
+    print(fields);
+  }
+
+  @override
+  void initState() {
+    _getFields();
   }
 
   Widget build(BuildContext context) {

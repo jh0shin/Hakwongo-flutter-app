@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hwgo/pay/payresult.dart';
 
 // kakao login
 import 'package:kakao_flutter_sdk/all.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           "/" : (context) => LoadingPage(),
           "/tab" : (context) => TabPage(),
           "/login" : (context) => LoginPage(),
+          "/result" : (context) => Result(),
         }
       );
     }

@@ -3,7 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:hwgo/settings.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'bloc/userbloc.dart';
+import '../bloc/userbloc.dart';
 
 import 'package:hwgo/search.dart';
 
