@@ -36,6 +36,9 @@ class _PaymentPageState extends State<PaymentPage> {
             child: Container(
                 color: Colors.white,
                 child: IamportPayment(
+                  appBar: new AppBar(
+                    title: new Text('학습성향검사 결제')
+                  ),
                   // Webview loading component
                     initialChild: Container(
                         child: Center(

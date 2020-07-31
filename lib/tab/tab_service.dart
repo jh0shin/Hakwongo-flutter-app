@@ -16,12 +16,15 @@ class _ServicePageState extends State<ServicePage> {
   bool _learningTestValidPayment = false;
 
   // Premium Counseling service apply button
-  void _CounselingApplyButtonClicked() {
-
+  void _counselingApplyButtonClicked() {
+    // TODO : for testing
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => LearningTestPage()
+    ));
   }
 
   // Student learning propensity test button
-  void _LearningTestButtonClicked() {
+  void _learningTestButtonClicked() {
     // no valid payment data => goto payment page
     if (_learningTestValidPayment == false) {
       Navigator.push(context, MaterialPageRoute(
@@ -197,7 +200,7 @@ class _ServicePageState extends State<ServicePage> {
                               borderRadius: BorderRadius.circular(5),
                           ),
                           child: RawMaterialButton(
-                            onPressed: _CounselingApplyButtonClicked,
+                            onPressed: _counselingApplyButtonClicked,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -228,7 +231,7 @@ class _ServicePageState extends State<ServicePage> {
                             borderRadius: BorderRadius.circular(5),
                           ),
                           child: RawMaterialButton(
-                            onPressed: _LearningTestButtonClicked,
+                            onPressed: _learningTestButtonClicked,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
