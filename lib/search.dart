@@ -112,6 +112,8 @@ class _SearchPageState extends State<SearchPage> {
     _getMoreSearchResult();
   }
 
+  /* TODO: 검색 결과 없을 시 없다고 화면에 표시 */
+
   @override
   Widget build(BuildContext context) => BlocBuilder<UserBloc, UserState>(
     builder: (context, state) {

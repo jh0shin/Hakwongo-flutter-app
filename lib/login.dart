@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:kakao_flutter_sdk/auth.dart';
@@ -20,14 +21,190 @@ class _LoginPageState extends State<LoginPage> {
   // not installed => login by web
   bool _isKakaoTalkInstalled = true;
 
+  // policy check
+  bool _isPolicyChecked = false;
+
+  // Policy info
+  String _policy;
+
   @override
   void initState() {
     _initKakaoTalkInstalled();
+    _getPolicy();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _getPolicy() async {
+    _policy = await rootBundle.loadString('assets/csv/policy.txt');
+  }
+
+  // policy not checked -> show alert
+  void _policyNotChecked() {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          double screenWidth = MediaQuery.of(context).size.width;
+
+          return Center(
+              child: SizedBox(
+                width: screenWidth * 0.7,
+                height: screenWidth * 0.5,
+                child: Container(
+                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        // space
+                        SizedBox(height: screenWidth * 0.1),
+
+                        // guide text
+                        Material(
+                            child: Container(
+                                color: Colors.white,
+                                child: Text(
+                                    "개인정보 처리 방침에 동의해주세요.",
+                                    style: TextStyle(
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.04,
+                                        letterSpacing: -1,
+                                        color: Colors.black
+                                    )
+                                )
+                            )
+                        ),
+
+                        // space
+                        SizedBox(height: screenWidth * 0.1),
+
+                        // button
+                        RawMaterialButton(
+                          onPressed: (){
+                            Navigator.pop(context);
+                          },
+                          child: SizedBox(
+                            width: screenWidth * 0.325,
+                            height: screenWidth * 0.1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                                color: Colors.black45,
+                              ),
+                              child: Center(
+                                child: Text(
+                                    "확인",
+                                    style: TextStyle(
+                                        fontFamily: 'dream4',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.white
+                                    )
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                ),
+              )
+          );
+        }
+    );
+  }
+
+  // private information policy -> show dialog and show detail
+  void _policyClicked() {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          double screenWidth = MediaQuery.of(context).size.width;
+
+          return Center(
+              child: SizedBox(
+                width: screenWidth * 0.8,
+                height: screenWidth * 1,
+                child: Container(
+                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+
+                        Expanded(
+                          child: Material(
+                            child: Container(
+                              padding: EdgeInsets.all(screenWidth * 0.02),
+                              width: screenWidth,
+                              color: Colors.white,
+                              child: ListView(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                children: <Widget>[
+                                  Text(
+                                      _policy,
+                                      style: TextStyle(
+                                          fontFamily: 'dream3',
+                                          fontSize: screenWidth * 0.03,
+                                          letterSpacing: -1,
+                                          color: Colors.black
+                                      )
+                                  ),
+
+                                  // padding
+                                  SizedBox( height: screenWidth * 0.01 ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // okay button
+                        RawMaterialButton(
+                          onPressed: (){
+                            Navigator.pop(context, true);
+                          },
+                          child: SizedBox(
+                            width: screenWidth * 0.325,
+                            height: screenWidth * 0.1,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                                color: bgcolor,
+                              ),
+                              child: Center(
+                                child: Text(
+                                    "확인",
+                                    style: TextStyle(
+                                        fontFamily: 'dream4',
+                                        fontSize: screenWidth * 0.05,
+                                        letterSpacing: -2,
+                                        color: Colors.white
+                                    )
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                ),
+              )
+          );
+        }
+    );
   }
 
   // initial kakaotalk install check
@@ -69,6 +246,8 @@ class _LoginPageState extends State<LoginPage> {
       // check if kakaotalk is installed
       isKakaoTalkInstalled();
 
+      double screenWidth = MediaQuery.of(context).size.width;
+
       return Material(
         child: Container(
             color: bgcolor,
@@ -90,6 +269,44 @@ class _LoginPageState extends State<LoginPage> {
                               height: MediaQuery.of(context).size.height * 0.3
                           ),
 
+                          Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.fromLTRB(screenWidth * 0.1, 0, screenWidth * 0.1, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Theme(
+                                  data: ThemeData(unselectedWidgetColor: Colors.white),
+                                  child: Checkbox(
+                                    value: _isPolicyChecked,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        _isPolicyChecked  = value;
+                                      });
+                                    }
+                                  )
+                                ),
+
+                                RawMaterialButton(
+                                    onPressed: _policyClicked,
+                                    child: Text(
+                                      "개인정보 처리 방침에 동의합니다.",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        fontFamily: 'dream3',
+                                        fontSize: screenWidth * 0.04,
+                                        letterSpacing: -1,
+                                        color: Colors.white
+                                      ),
+                                    )
+                                ),
+
+                                SizedBox(width: screenWidth * 0.02),
+                              ],
+                            )
+                          ),
+
                           InkWell(
                               child: Image.asset(
                                 'assets/image/kakao_login_btn.png',
@@ -97,9 +314,13 @@ class _LoginPageState extends State<LoginPage> {
                                 height: MediaQuery.of(context).size.width * 0.8 * (49 / 300),
                               ),
                               onTap: () {
-                                _loginWithKakao();
+                                if (_isPolicyChecked == true)
+                                  _loginWithKakao();
+                                else
+                                  _policyNotChecked();
                               }
                           ),
+
                           Padding(
                             padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
                           )

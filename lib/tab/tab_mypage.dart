@@ -324,6 +324,13 @@ class _MyInfoPageState extends State<MyInfoPage> {
     _getMyComment();
     _getMoreMyComment();
   }
+  /*
+  TODO : 내가 쓴 댓글에서 클릭하여 학원 페이지로 넘어갔다가 댓글 작성 후
+  다시 돌아오면 내가 쓴 댓글에 바로 반영이 안되는 오류가 있음
+  setState로 설정을 해봤는데도 같아서 아예 페이지 자체를 새로 시작해서
+  initState에서 댓글을 api요청으로 다시 받아오는 방법이 필요함.
+
+   */
 
   Widget build(BuildContext context) => BlocBuilder<UserBloc, UserState>(
     builder: (context, state) {

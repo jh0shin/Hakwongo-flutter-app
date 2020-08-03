@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           "/" : (context) => LoadingPage(),
           "/tab" : (context) => TabPage(),
           "/login" : (context) => LoginPage(),
-          "/result" : (context) => Result(),
+          "/result" : (context) => ResultPage(),
         }
       );
     }

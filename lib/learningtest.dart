@@ -1,8 +1,15 @@
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:hwgo/settings.dart';
+
+// rest api request
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'bloc/userbloc.dart';
 
 class LearningTestPage extends StatefulWidget {
   @override
@@ -15,6 +22,9 @@ class _LearningTestPageState extends State<LearningTestPage> {
   List<String> _question;
   String input;
   List<int> _result = [];
+  String _resultString = '';
+
+  String _user;
 
   // question index
   int _questionIndex = -1;
@@ -136,11 +146,30 @@ class _LearningTestPageState extends State<LearningTestPage> {
     );
   }
 
+  // save test result on db
+  void _postTestResult() async {
+    _resultString = '';
+    for(int item in _result) {
+      _resultString += item.toString();
+    }
+
+    final response = await http.post(
+        'http://hakwongo.com:3000/api2/test/end',
+        body: {
+          'user' : _user,
+          'testtime' : DateTime.now().toString().split(".")[0],
+          'result' : _resultString,
+        }
+    );
+  }
+
+  // get learning test questions from txt file
   void _getFields() async {
     input = await rootBundle.loadString('assets/csv/learningtest.txt');
     _question = input.split("\n");
   }
 
+  // get n th question and check if test is end
   void _select(int num) {
     if (_result.length == _questionIndex)
       _result.add(num);
@@ -148,15 +177,23 @@ class _LearningTestPageState extends State<LearningTestPage> {
       _result[_questionIndex] = num;
 
     setState(() {
-      if (_questionIndex == (_question.length - 1))
+      if (_questionIndex == (_question.length - 1)) {
         _isTestEnd = true;
+        _postTestResult();
+      }
       else _questionIndex++;
     });
   }
 
   @override
   void initState() {
+    super.initState();
+
     _getFields();
+
+    // get logged in user id from UserBloc
+    _user = BlocProvider.of<UserBloc>(context).currentState.toString()
+        .split(",")[0].split(": ")[1];
   }
 
   Widget build(BuildContext context) {

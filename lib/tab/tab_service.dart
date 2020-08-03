@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 
 import 'package:hwgo/settings.dart';
-import 'file:///C:/Users/jh0sh/Desktop/Github/hwgo/lib/pay/payment.dart';
+import 'package:hwgo/pay/payment.dart';
 import 'package:hwgo/learningtest.dart';
+
+// bloc
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hwgo/bloc/userbloc.dart';
+
+// rest api request
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ServicePage extends StatefulWidget {
   @override
@@ -14,6 +22,28 @@ class _ServicePageState extends State<ServicePage> {
   // whether user has valid payment info
   // check at _initState()
   bool _learningTestValidPayment = false;
+
+  String _user = '';
+  String _validtime = '';
+
+  // check if payed data exists and valid
+  void _isValidPaymentExists() async {
+    final response = await http.post(
+        'http://hakwongo.com:3000/api2/test/valid',
+        body: {
+          'user' : _user,
+        }
+    );
+
+    if (response.body == '[]') {
+      _learningTestValidPayment = false;
+    }
+    else {
+      _validtime = jsonDecode(response.body)[0]['validtime'];
+      if (DateTime.parse(_validtime).isAfter(DateTime.now()))
+        _learningTestValidPayment = true;
+    }
+  }
 
   // Premium Counseling service apply button
   void _counselingApplyButtonClicked() {
@@ -151,6 +181,17 @@ class _ServicePageState extends State<ServicePage> {
           );
         }
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // get logged in user id from UserBloc
+    _user = BlocProvider.of<UserBloc>(context).currentState.toString()
+        .split(",")[0].split(": ")[1];
+
+    _isValidPaymentExists();
   }
 
   Widget build(BuildContext context) {
