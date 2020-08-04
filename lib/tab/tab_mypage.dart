@@ -19,6 +19,8 @@ class MyInfoPage extends StatefulWidget {
 
 class _MyInfoPageState extends State<MyInfoPage> {
 
+  // TODO : 회원 탈퇴 기능 추가
+  
   // logged in user information
   String _loginUser = '';
 

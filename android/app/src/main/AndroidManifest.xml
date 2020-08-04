@@ -37,6 +37,20 @@
                     android:scheme="hakwongo"/>
             </intent-filter>
         </activity>
+        <!-- Set up the Sign in with Apple activity, such that it's callable from the browser-redirect -->
+        <activity
+            android:name="com.aboutyou.dart_packages.sign_in_with_apple.SignInWithAppleCallback"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="signinwithapple" />
+                <data android:path="callback" />
+            </intent-filter>
+        </activity>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -45,5 +59,8 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="f51f316dd70869825e7caf626feb190d" />
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
     </application>
 </manifest>

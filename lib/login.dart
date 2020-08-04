@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hwgo/settings.dart';
+import 'dart:io';
 
+// kakao login
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:kakao_flutter_sdk/auth.dart';
 import 'package:kakao_flutter_sdk/common.dart';
 import 'package:kakao_flutter_sdk/user.dart';
 
+// apple login
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
+// bloc
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hwgo/bloc/userbloc.dart';
 
-import 'package:hwgo/settings.dart';
+// http
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   @override
@@ -31,6 +39,8 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     _initKakaoTalkInstalled();
     _getPolicy();
+
+    print(BlocProvider.of<UserBloc>(context).currentState.toString() + " - DEBUG");
   }
 
   @override
@@ -85,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                         // space
                         SizedBox(height: screenWidth * 0.1),
 
-                        // button
+                        // ok button
                         RawMaterialButton(
                           onPressed: (){
                             Navigator.pop(context);
@@ -111,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
                     )
                 ),
@@ -260,8 +270,8 @@ class _LoginPageState extends State<LoginPage> {
                             // logo image
                             // image size : 1924 * 1462 px
                             'assets/image/logo.png',
-                            width: MediaQuery.of(context).size.width * 0.5,
-                            height: MediaQuery.of(context).size.width * 0.5 * (1462 / 1924),
+                            width: screenWidth * 0.5,
+                            height: screenWidth * 0.5 * (1462 / 1924),
                           ),
 
                           // padding
@@ -310,8 +320,8 @@ class _LoginPageState extends State<LoginPage> {
                           InkWell(
                               child: Image.asset(
                                 'assets/image/kakao_login_btn.png',
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                height: MediaQuery.of(context).size.width * 0.8 * (49 / 300),
+                                width: screenWidth * 0.8,
+                                height: screenWidth * 0.8 * (49 / 300),
                               ),
                               onTap: () {
                                 if (_isPolicyChecked == true)
@@ -322,7 +332,62 @@ class _LoginPageState extends State<LoginPage> {
                           ),
 
                           Padding(
-                            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+                            padding: EdgeInsets.all(screenWidth * 0.02),
+                          ),
+
+                          // apple login button
+                          SizedBox(
+                            width: screenWidth * 0.8,
+                            height: screenWidth * 0.8 * (49 / 300),
+                            child: SignInWithAppleButton(
+                                onPressed: () async {
+                                  final credential = await SignInWithApple.getAppleIDCredential(
+                                    scopes: [
+                                      AppleIDAuthorizationScopes.email,
+                                      AppleIDAuthorizationScopes.fullName,
+                                    ],
+                                    webAuthenticationOptions: WebAuthenticationOptions(
+                                      // TODO : set items from apple developer portal
+                                      clientId: '',
+                                      redirectUri: Uri.parse(''),
+                                    ),
+                                    // TODO : Remove these if no need for them
+                                    nonce: 'example-nonce',
+                                    state: 'example-state',
+                                  );
+
+                                  print(credential);
+
+                                  // This is the endpoint that will convert an authorization code obtained
+                                  // via Sign in with Apple into a session in your system
+                                  final signInWithAppleEndpoint = Uri(
+                                    scheme: 'https',
+                                    host: 'flutter-sign-in-with-apple-example.glitch.me',
+                                    path: '/sign_in_with_apple',
+                                    queryParameters: <String, String>{
+                                      'code': credential.authorizationCode,
+                                      'firstName': credential.givenName,
+                                      'lastName': credential.familyName,
+                                      'useBundleId':
+                                      Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
+                                      // if (credential.state != null) 'state': credential.state,
+                                      'state': credential.state
+                                    },
+                                  );
+
+                                  final session = await http.Client().post(
+                                    signInWithAppleEndpoint,
+                                  );
+
+                                  // If we got this far, a session based on the Apple ID credential has been created in your system,
+                                  // and you can now set this as the app's session
+                                  print(session);
+                                }
+                            ),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.all(screenWidth * 0.05),
                           )
                         ]
                     )
