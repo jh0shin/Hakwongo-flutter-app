@@ -27,11 +27,13 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // offset
   int _bookmarkOffset = 0;
   int _commentOffset = 0;
+  int _testOffset = 0;
   int _limit = 3;
 
   // whether item left
   bool _isBookmarkLeft = true;
   bool _isCommentLeft = true;
+  bool _isTestLeft = true;
 
   // bookmark and comment list
   List<AcademyInfo> _bookmarkedAcademy = [];
@@ -39,6 +41,57 @@ class _MyInfoPageState extends State<MyInfoPage> {
   List<BookmarkedAcademy> _myBookmarkBuffer = [];
   List<AcademyComment> _myComment = [];
   List<AcademyComment> _myCommentBuffer = [];
+  List<RecentTest> _myTest = [];
+  List<RecentTest> _myTestBuffer = [];
+
+  // get user's test
+  void _getMyTest() async {
+    final response = await http.post(
+      'http://hakwongo.com:3000/pai2/test/recent',
+      body: {
+        'user' : _loginUser,
+        'limit' : _limit.toString(),
+        'offset' : _testOffset.toString()
+      }
+    );
+
+    final List<RecentTest> parsedMyTest = jsonDecode(response.body)
+      .map<RecentTest>((json) => RecentTest.fromJSON(json))
+      .toList();
+    setState(() {
+      _myTest.clear();
+      _myTest.addAll(parsedMyTest);
+    });
+  }
+
+  // get user's more comment
+  void _getMoreMyTest() async {
+    _testOffset += _limit;
+
+    final response = await http.post(
+        'http://hakwongo.com:3000/api2/test/recent',
+        body: {
+          'user' : _loginUser,
+          'limit' : _limit.toString(),
+          'offset' : _testOffset.toString(),
+        }
+    );
+
+    if (response.body == '[]') {
+      setState(() {
+        _myTestBuffer.clear();
+        _isTestLeft = false;
+      });
+    } else {
+      final List<RecentTest> parsedMyTest = jsonDecode(response.body)
+          .map<RecentTest>((json) => RecentTest.fromJSON(json))
+          .toList();
+      setState(() {
+        _myTestBuffer.clear();
+        _myTestBuffer.addAll(parsedMyTest);
+      });
+    }
+  }
 
   // get user's comment
   void _getMyComment() async {
@@ -50,8 +103,6 @@ class _MyInfoPageState extends State<MyInfoPage> {
         'offset' : _commentOffset.toString(),
       }
     );
-
-    print(response.body);
 
     final List<AcademyComment> parsedMyComment = jsonDecode(response.body)
       .map<AcademyComment>((json) => AcademyComment.fromJSON(json))
@@ -325,6 +376,8 @@ class _MyInfoPageState extends State<MyInfoPage> {
     _getMoreBookmark();
     _getMyComment();
     _getMoreMyComment();
+    _getMyTest();
+    _getMoreMyTest();
   }
   /*
   TODO : 내가 쓴 댓글에서 클릭하여 학원 페이지로 넘어갔다가 댓글 작성 후
@@ -743,6 +796,110 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                             )
                                               : SizedBox(),
                                           ],
+                                        )
+                                    ),
+                                  ),
+
+                                  // Contour line
+                                  Container(
+                                    width: screenWidth * 0.9,
+                                    margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(width: 0.5, color: Colors.black45),
+                                    ),
+                                  ),
+
+                                  // my learning test
+                                  SizedBox(
+                                    width: screenWidth,
+                                    child: Container(
+                                        padding: EdgeInsets.all(screenWidth * 0.02),
+                                        child: Column(
+                                          children: <Widget>[
+                                            // Title - liked Academy
+                                            Container(
+                                              alignment: Alignment.centerLeft,
+                                              padding: EdgeInsets.all(screenWidth * 0.02),
+                                              child: Text(
+                                                  "내 학습성향검사",
+                                                  style: TextStyle(
+                                                    fontFamily: 'dream5',
+                                                    fontSize: screenWidth * 0.06,
+                                                    letterSpacing: -2,
+                                                    color: Colors.black,
+                                                  )
+                                              ),
+                                            ),
+                                          ]
+
+                                              + List.generate(_myTest.length, (index) {
+                                                return SizedBox(
+                                                  width: screenWidth,
+                                                  child: Container(
+                                                    padding: EdgeInsets.all(screenWidth * 0.02),
+                                                    margin: EdgeInsets.only(bottom: screenWidth * 0.02),
+                                                    color: commentcolor,
+                                                    child: RawMaterialButton(
+                                                        onPressed: () { /* TODO : Add action */ },
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: <Widget>[
+                                                            // time and like information, delete and like button
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              children: <Widget>[
+                                                                // time
+                                                                Text(
+                                                                    _myTest[index].testtime + '에 시행한 검사',
+                                                                    style: TextStyle(
+                                                                      fontFamily: 'dream4',
+                                                                      fontSize: screenWidth * 0.04,
+                                                                      letterSpacing: -1,
+                                                                      color: Colors.black45,
+                                                                    )
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        )
+                                                    ),
+                                                  ),
+                                                );
+                                              })
+
+                                              + [
+                                                // show more button
+                                                _isTestLeft
+                                                    ? SizedBox(
+                                                    width: screenWidth * 0.9,
+                                                    height: screenWidth * 0.1,
+                                                    child: RawMaterialButton(
+                                                      onPressed: (){
+                                                        if (_myTestBuffer.length != 0) {
+                                                          setState(() {
+                                                            _myTest.addAll(_myTestBuffer);
+                                                          });
+                                                          _getMoreMyComment();
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        alignment: Alignment.center,
+                                                        width: screenWidth * 0.9,
+                                                        padding: EdgeInsets.all(screenWidth * 0.02),
+                                                        child: Text(
+                                                            "내 학습성향검사 더보기",
+                                                            style: TextStyle(
+                                                              fontFamily: 'dream4',
+                                                              fontSize: screenWidth * 0.05,
+                                                              letterSpacing: -2,
+                                                              color: Colors.black,
+                                                            )
+                                                        ),
+                                                      ),
+                                                    )
+                                                )
+                                                    : SizedBox(),
+                                              ],
                                         )
                                     ),
                                   ),

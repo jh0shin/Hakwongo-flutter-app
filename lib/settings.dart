@@ -137,3 +137,26 @@ class BookmarkedAcademy {
     );
   }
 }
+
+// RecentTest class for encoded json data from http request
+class RecentTest {
+  final String user;
+  final String testtime;
+  final String result;
+
+  // constructor
+  RecentTest({
+    this.user,
+    this.testtime,
+    this.result,
+  });
+
+  // factory constructor
+  factory RecentTest.fromJSON(Map<String, dynamic> json) {
+    return RecentTest(
+      user: json['user'],
+      testtime: json['testtime'],
+      result: json['result'],
+    );
+  }
+}
