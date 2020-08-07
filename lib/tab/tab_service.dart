@@ -203,7 +203,7 @@ class _ServicePageState extends State<ServicePage> {
           color: bgcolor,
           child: SafeArea(
               child: Container(
-                color: Colors.white,
+                color: bgcolor,
                 child: ListView(
                   children: <Widget>[
                     // Premium service introducing area

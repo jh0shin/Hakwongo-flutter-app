@@ -270,53 +270,16 @@ class _LoginPageState extends State<LoginPage> {
                             // logo image
                             // image size : 1924 * 1462 px
                             'assets/image/logo.png',
-                            width: screenWidth * 0.5,
-                            height: screenWidth * 0.5 * (1462 / 1924),
+                            width: screenWidth * 0.6,
+                            height: screenWidth * 0.6 * (1462 / 1924),
                           ),
 
                           // padding
                           SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.3
+                              height: screenWidth * 0.5
                           ),
 
-                          Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.fromLTRB(screenWidth * 0.1, 0, screenWidth * 0.1, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Theme(
-                                  data: ThemeData(unselectedWidgetColor: Colors.white),
-                                  child: Checkbox(
-                                    value: _isPolicyChecked,
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        _isPolicyChecked  = value;
-                                      });
-                                    }
-                                  )
-                                ),
-
-                                RawMaterialButton(
-                                    onPressed: _policyClicked,
-                                    child: Text(
-                                      "개인정보 처리 방침에 동의합니다.",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        decoration: TextDecoration.underline,
-                                        fontFamily: 'dream3',
-                                        fontSize: screenWidth * 0.04,
-                                        letterSpacing: -1,
-                                        color: Colors.white
-                                      ),
-                                    )
-                                ),
-
-                                SizedBox(width: screenWidth * 0.02),
-                              ],
-                            )
-                          ),
-
+                          // kakao login button
                           InkWell(
                               child: Image.asset(
                                 'assets/image/kakao_login_btn.png',
@@ -332,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
 
                           Padding(
-                            padding: EdgeInsets.all(screenWidth * 0.02),
+                            padding: EdgeInsets.all(screenWidth * 0.015),
                           ),
 
                           // apple login button
@@ -384,6 +347,49 @@ class _LoginPageState extends State<LoginPage> {
                                   print(session);
                                 }
                             ),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.all(screenWidth * 0.02),
+                          ),
+
+                          // private policy agree
+                          Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.fromLTRB(screenWidth * 0.1, 0, screenWidth * 0.1, 0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Theme(
+                                      data: ThemeData(unselectedWidgetColor: Colors.white),
+                                      child: Checkbox(
+                                          value: _isPolicyChecked,
+                                          onChanged: (bool value) {
+                                            setState(() {
+                                              _isPolicyChecked  = value;
+                                            });
+                                          }
+                                      )
+                                  ),
+
+                                  RawMaterialButton(
+                                      onPressed: _policyClicked,
+                                      child: Text(
+                                        "개인정보 처리 방침에 동의합니다.",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            decoration: TextDecoration.underline,
+                                            fontFamily: 'dream3',
+                                            fontSize: screenWidth * 0.04,
+                                            letterSpacing: -1,
+                                            color: Colors.white
+                                        ),
+                                      )
+                                  ),
+
+                                  SizedBox(width: screenWidth * 0.02),
+                                ],
+                              )
                           ),
 
                           Padding(
