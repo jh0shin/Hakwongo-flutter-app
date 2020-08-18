@@ -264,6 +264,7 @@ class _LearningTestPageState extends State<LearningTestPage> {
                       _questionIndex == -1
                       // question starting page
                           ? Container(
+                          color: Colors.white,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[

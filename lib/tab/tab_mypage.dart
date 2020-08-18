@@ -47,13 +47,15 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // get user's test
   void _getMyTest() async {
     final response = await http.post(
-      'http://hakwongo.com:3000/pai2/test/recent',
+      'http://hakwongo.com:3000/api2/test/recent',
       body: {
         'user' : _loginUser,
         'limit' : _limit.toString(),
         'offset' : _testOffset.toString()
       }
     );
+
+    print(response.body);
 
     final List<RecentTest> parsedMyTest = jsonDecode(response.body)
       .map<RecentTest>((json) => RecentTest.fromJSON(json))
@@ -879,7 +881,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                           setState(() {
                                                             _myTest.addAll(_myTestBuffer);
                                                           });
-                                                          _getMoreMyComment();
+                                                          _getMoreMyTest();
                                                         }
                                                       },
                                                       child: Container(

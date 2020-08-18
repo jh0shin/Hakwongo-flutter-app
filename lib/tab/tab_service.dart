@@ -222,7 +222,7 @@ class _ServicePageState extends State<ServicePage> {
                                     fontFamily: 'dream5',
                                     fontSize: screenWidth * 0.06,
                                     letterSpacing: -2,
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   )
                               )
                           ),
@@ -237,8 +237,9 @@ class _ServicePageState extends State<ServicePage> {
                           margin: EdgeInsets.all(screenWidth * 0.02),
                           padding: EdgeInsets.all(screenWidth * 0.02),
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black, width: 1),
-                              borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: Colors.white10, width: 1),
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white10,
                           ),
                           child: RawMaterialButton(
                             onPressed: _counselingApplyButtonClicked,
@@ -251,7 +252,7 @@ class _ServicePageState extends State<ServicePage> {
                                       fontFamily: 'dream5',
                                       fontSize: screenWidth * 0.06,
                                       letterSpacing: -2,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                     )
                                 ),
                               ],
@@ -268,8 +269,9 @@ class _ServicePageState extends State<ServicePage> {
                           margin: EdgeInsets.all(screenWidth * 0.02),
                           padding: EdgeInsets.all(screenWidth * 0.02),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black, width: 1),
+                            border: Border.all(color: Colors.white10, width: 1),
                             borderRadius: BorderRadius.circular(5),
+                            color: Colors.white10
                           ),
                           child: RawMaterialButton(
                             onPressed: _learningTestButtonClicked,
@@ -282,7 +284,7 @@ class _ServicePageState extends State<ServicePage> {
                                       fontFamily: 'dream5',
                                       fontSize: screenWidth * 0.06,
                                       letterSpacing: -2,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                     )
                                 ),
                                 Text(
@@ -291,7 +293,7 @@ class _ServicePageState extends State<ServicePage> {
                                       fontFamily: 'dream5',
                                       fontSize: screenWidth * 0.04,
                                       letterSpacing: -1,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                     )
                                 ),
                               ],

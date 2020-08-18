@@ -311,8 +311,8 @@ class _LoginPageState extends State<LoginPage> {
                                     ],
                                     webAuthenticationOptions: WebAuthenticationOptions(
                                       // TODO : set items from apple developer portal
-                                      clientId: '',
-                                      redirectUri: Uri.parse(''),
+                                      clientId: 'com.service.hakwongo', // services id
+                                      redirectUri: Uri.parse('https://complete-excited-pineapple.glitch.me/callbacks/sign_in_with_apple'),
                                     ),
                                     // TODO : Remove these if no need for them
                                     nonce: 'example-nonce',
@@ -325,7 +325,7 @@ class _LoginPageState extends State<LoginPage> {
                                   // via Sign in with Apple into a session in your system
                                   final signInWithAppleEndpoint = Uri(
                                     scheme: 'https',
-                                    host: 'flutter-sign-in-with-apple-example.glitch.me',
+                                    host: 'complete-excited-pineapple.glitch.me',
                                     path: '/sign_in_with_apple',
                                     queryParameters: <String, String>{
                                       'code': credential.authorizationCode,

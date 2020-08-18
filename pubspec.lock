@@ -84,7 +84,7 @@ packages:
       name: dio
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.9"
+    version: "3.0.10"
   equatable:
     dependency: "direct main"
     description:
@@ -157,7 +157,7 @@ packages:
       name: iamport_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.11"
+    version: "0.9.12"
   image:
     dependency: transitive
     description:
@@ -435,7 +435,7 @@ packages:
       name: uni_links
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0"
+    version: "0.4.0"
   url_launcher:
     dependency: "direct main"
     description:
@@ -470,7 +470,7 @@ packages:
       name: url_launcher_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.2"
+    version: "0.1.2+1"
   vector_math:
     dependency: transitive
     description:
