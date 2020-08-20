@@ -276,7 +276,7 @@ class _LoginPageState extends State<LoginPage> {
 
                           // padding
                           SizedBox(
-                              height: screenWidth * 0.5
+                              height: screenWidth * 0.3
                           ),
 
                           // kakao login button
