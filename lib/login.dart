@@ -298,56 +298,56 @@ class _LoginPageState extends State<LoginPage> {
                             padding: EdgeInsets.all(screenWidth * 0.015),
                           ),
 
-                          // apple login button
-                          SizedBox(
-                            width: screenWidth * 0.8,
-                            height: screenWidth * 0.8 * (49 / 300),
-                            child: SignInWithAppleButton(
-                                onPressed: () async {
-                                  final credential = await SignInWithApple.getAppleIDCredential(
-                                    scopes: [
-                                      AppleIDAuthorizationScopes.email,
-                                      AppleIDAuthorizationScopes.fullName,
-                                    ],
-                                    webAuthenticationOptions: WebAuthenticationOptions(
-                                      // TODO : set items from apple developer portal
-                                      clientId: 'com.service.hakwongo', // services id
-                                      redirectUri: Uri.parse('https://complete-excited-pineapple.glitch.me/callbacks/sign_in_with_apple'),
-                                    ),
-                                    // TODO : Remove these if no need for them
-                                    nonce: 'example-nonce',
-                                    state: 'example-state',
-                                  );
-
-                                  print(credential);
-
-                                  // This is the endpoint that will convert an authorization code obtained
-                                  // via Sign in with Apple into a session in your system
-                                  final signInWithAppleEndpoint = Uri(
-                                    scheme: 'https',
-                                    host: 'complete-excited-pineapple.glitch.me',
-                                    path: '/sign_in_with_apple',
-                                    queryParameters: <String, String>{
-                                      'code': credential.authorizationCode,
-                                      'firstName': credential.givenName,
-                                      'lastName': credential.familyName,
-                                      'useBundleId':
-                                      Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
-                                      // if (credential.state != null) 'state': credential.state,
-                                      'state': credential.state
-                                    },
-                                  );
-
-                                  final session = await http.Client().post(
-                                    signInWithAppleEndpoint,
-                                  );
-
-                                  // If we got this far, a session based on the Apple ID credential has been created in your system,
-                                  // and you can now set this as the app's session
-                                  print(session);
-                                }
-                            ),
-                          ),
+//                          // apple login button
+//                          SizedBox(
+//                            width: screenWidth * 0.8,
+//                            height: screenWidth * 0.8 * (49 / 300),
+//                            child: SignInWithAppleButton(
+//                                onPressed: () async {
+//                                  final credential = await SignInWithApple.getAppleIDCredential(
+//                                    scopes: [
+//                                      AppleIDAuthorizationScopes.email,
+//                                      AppleIDAuthorizationScopes.fullName,
+//                                    ],
+//                                    webAuthenticationOptions: WebAuthenticationOptions(
+//                                      // TODO : set items from apple developer portal
+//                                      clientId: 'com.service.hakwongo', // services id
+//                                      redirectUri: Uri.parse('https://complete-excited-pineapple.glitch.me/callbacks/sign_in_with_apple'),
+//                                    ),
+//                                    // TODO : Remove these if no need for them
+//                                    nonce: 'example-nonce',
+//                                    state: 'example-state',
+//                                  );
+//
+//                                  print(credential);
+//
+//                                  // This is the endpoint that will convert an authorization code obtained
+//                                  // via Sign in with Apple into a session in your system
+//                                  final signInWithAppleEndpoint = Uri(
+//                                    scheme: 'https',
+//                                    host: 'complete-excited-pineapple.glitch.me',
+//                                    path: '/sign_in_with_apple',
+//                                    queryParameters: <String, String>{
+//                                      'code': credential.authorizationCode,
+//                                      'firstName': credential.givenName,
+//                                      'lastName': credential.familyName,
+//                                      'useBundleId':
+//                                      Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
+//                                      // if (credential.state != null) 'state': credential.state,
+//                                      'state': credential.state
+//                                    },
+//                                  );
+//
+//                                  final session = await http.Client().post(
+//                                    signInWithAppleEndpoint,
+//                                  );
+//
+//                                  // If we got this far, a session based on the Apple ID credential has been created in your system,
+//                                  // and you can now set this as the app's session
+//                                  print(session);
+//                                }
+//                            ),
+//                          ),
 
                           Padding(
                             padding: EdgeInsets.all(screenWidth * 0.02),

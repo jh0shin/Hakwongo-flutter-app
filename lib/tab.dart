@@ -19,7 +19,6 @@ class _TabPageState extends State<TabPage> {
   List _pages = [
     TabMainPage(),
     RecentPage(),
-    ServicePage(),
     MyInfoPage()
   ];
 
@@ -73,18 +72,6 @@ class _TabPageState extends State<TabPage> {
                 color: Colors.black,
               )
             )
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart, size: screenWidth * 0.05),
-              title: Text(
-                  '서비스',
-                  style: TextStyle(
-                    fontFamily: 'dream5',
-                    fontSize: screenWidth * 0.035,
-                    letterSpacing: -1,
-                    color: Colors.black,
-                  )
-              )
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle, size: screenWidth * 0.05),
