@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hwgo/bloc/userbloc.dart';
 import 'dart:async';
 
+// apple login
+import 'package:shared_preferences/shared_preferences.dart';
+
 // login package
 import 'package:kakao_flutter_sdk/all.dart';
 
@@ -30,10 +33,20 @@ class _LoadingPageState extends State<LoadingPage> {
   _checkAccessToken() async {
     var token = await AccessTokenStore.instance.fromStore();
 
-    Timer(Duration(seconds: 1), () {
+    Timer(Duration(seconds: 1), () async {
+      // check if kakao login token exists
       if (token.refreshToken == null) {
-        // no access token exists
-        Navigator.of(context).pushReplacementNamed("/login");
+        // check if apple login token exists
+        final prefs = await SharedPreferences.getInstance();
+        final appleUser = prefs.getString('apple') ?? '';
+        print(appleUser);
+
+        if (appleUser == '') {
+          // no access token exists
+          Navigator.of(context).pushReplacementNamed("/login");
+        }
+
+        else Navigator.of(context).pushReplacementNamed("/tab");
       } else {
         // access token exists
         Navigator.of(context).pushReplacementNamed("/tab");

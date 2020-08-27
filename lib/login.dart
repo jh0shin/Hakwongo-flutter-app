@@ -11,6 +11,7 @@ import 'package:kakao_flutter_sdk/user.dart';
 
 // apple login
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // bloc
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -312,7 +313,7 @@ class _LoginPageState extends State<LoginPage> {
                                     webAuthenticationOptions: WebAuthenticationOptions(
                                       // TODO : set items from apple developer portal
                                       clientId: 'com.service.hakwongo', // services id
-                                      redirectUri: Uri.parse('https://complete-excited-pineapple.glitch.me/callbacks/sign_in_with_apple'),
+                                      redirectUri: Uri.parse('http://www.hakwongo.com:3000/auth/callbacks/sign_in_with_apple'),
                                     ),
                                     // TODO : Remove these if no need for them
                                     nonce: 'example-nonce',
@@ -324,8 +325,8 @@ class _LoginPageState extends State<LoginPage> {
                                   // This is the endpoint that will convert an authorization code obtained
                                   // via Sign in with Apple into a session in your system
                                   final signInWithAppleEndpoint = Uri(
-                                    scheme: 'https',
-                                    host: 'complete-excited-pineapple.glitch.me',
+                                    scheme: 'http',
+                                    host: 'www.hakwongo.com',
                                     path: '/sign_in_with_apple',
                                     queryParameters: <String, String>{
                                       'code': credential.authorizationCode,
@@ -345,6 +346,14 @@ class _LoginPageState extends State<LoginPage> {
                                   // If we got this far, a session based on the Apple ID credential has been created in your system,
                                   // and you can now set this as the app's session
                                   print(session);
+
+                                  // TODO : save credential data in device and navigate to main page
+                                  final prefs = await SharedPreferences.getInstance();
+                                  prefs.setString('apple', credential.userIdentifier);
+
+                                  print(credential.userIdentifier);
+
+                                  print(prefs.getString('apple'));
                                 }
                             ),
                           ),

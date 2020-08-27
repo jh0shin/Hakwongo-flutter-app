@@ -27,6 +27,7 @@ dependencies:
 
   # apple login
   sign_in_with_apple: ^2.5.2
+  shared_preferences: ^0.5.10
 
   # kakao map
   flutter_webview_plugin: ^0.3.10+1
