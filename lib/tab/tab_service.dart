@@ -187,9 +187,14 @@ class _ServicePageState extends State<ServicePage> {
   void initState() {
     super.initState();
 
+    print("kakao user");
+    print(BlocProvider.of<UserBloc>(context).currentState.toString() == "UserLoggedOut");
+    print(BlocProvider.of<UserBloc>(context).currentState.toString() == "UserUninitialized");
+    print(BlocProvider.of<UserBloc>(context).currentState.toString());
+
     // get logged in user id from UserBloc
-    _user = BlocProvider.of<UserBloc>(context).currentState.toString()
-        .split(",")[0].split(": ")[1];
+//    _user = BlocProvider.of<UserBloc>(context).currentState.toString()
+//        .split(",")[0].split(": ")[1];
 
     _isValidPaymentExists();
   }

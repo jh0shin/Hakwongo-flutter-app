@@ -324,20 +324,30 @@ class _LoginPageState extends State<LoginPage> {
 
                                   // This is the endpoint that will convert an authorization code obtained
                                   // via Sign in with Apple into a session in your system
-                                  final signInWithAppleEndpoint = Uri(
-                                    scheme: 'http',
-                                    host: 'www.hakwongo.com',
-                                    path: '/sign_in_with_apple',
-                                    queryParameters: <String, String>{
-                                      'code': credential.authorizationCode,
-                                      'firstName': credential.givenName,
-                                      'lastName': credential.familyName,
-                                      'useBundleId':
-                                      Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
-                                      // if (credential.state != null) 'state': credential.state,
-                                      'state': credential.state
-                                    },
+//                                  final signInWithAppleEndpoint = Uri(
+////                                    scheme: 'http',
+////                                    host: 'www.hakwongo.com',
+////                                    path: ':3000/auth/sign_in_with_apple',
+////                                    queryParameters: <String, String>{
+////                                      'code': credential.authorizationCode,
+////                                      'firstName': credential.givenName,
+////                                      'lastName': credential.familyName,
+////                                      'useBundleId':
+////                                      Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
+////                                      // if (credential.state != null) 'state': credential.state,
+////                                      'state': credential.state
+////                                    },
+////                                  );
+                                  final signInWithAppleEndpoint = Uri.encodeFull(
+                                    "http://www.hakwongo.com:3000/auth/sign_in_with_apple?"
+                                        + "code=" + credential.authorizationCode.toString()
+                                        + "&firstName=" + credential.givenName.toString()
+                                        + "&lastName=" + credential.familyName.toString()
+                                        + "&useBundleId=" + (Platform.isIOS || Platform.isMacOS ? 'true' : 'false')
+                                        + "&state=" + credential.state.toString()
                                   );
+
+                                  print(signInWithAppleEndpoint);
 
                                   final session = await http.Client().post(
                                     signInWithAppleEndpoint,
@@ -345,15 +355,13 @@ class _LoginPageState extends State<LoginPage> {
 
                                   // If we got this far, a session based on the Apple ID credential has been created in your system,
                                   // and you can now set this as the app's session
-                                  print(session);
+                                  print(session.body);
 
                                   // TODO : save credential data in device and navigate to main page
                                   final prefs = await SharedPreferences.getInstance();
                                   prefs.setString('apple', credential.userIdentifier);
 
-                                  print(credential.userIdentifier);
-
-                                  print(prefs.getString('apple'));
+                                  Navigator.of(context).pushReplacementNamed("/tab");
                                 }
                             ),
                           ),

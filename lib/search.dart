@@ -40,7 +40,7 @@ class _SearchPageState extends State<SearchPage> {
   // post http request for given conditions
   void _getSearchResult() async {
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/search/init',
+      'https://hakwongo.com:2052/api2/search/init',
       body: {
         'limit' : _limit.toString(),
         'offset' : _offset.toString(),
@@ -68,7 +68,7 @@ class _SearchPageState extends State<SearchPage> {
     _offset += 1;
 
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/search/init',
+      'https://hakwongo.com:2052/api2/search/init',
       body: {
         'limit' : _limit.toString(),
         'offset' : (_offset * _limit).toString(),

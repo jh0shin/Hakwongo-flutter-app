@@ -92,7 +92,10 @@ class UserUninitialized extends UserState {
   String toString() => "UserUninitialized";
 }
 
-class UserLoggedOut extends UserState {}
+class UserLoggedOut extends UserState {
+  @override
+  String toString() => "UserLoggedOut";
+}
 
 class UserFetched extends UserState {
   final User user;
