@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hwgo/settings.dart';
 import 'dart:io';
+import 'dart:convert';
 
 // kakao login
 import 'package:kakao_flutter_sdk/all.dart';
@@ -313,7 +314,7 @@ class _LoginPageState extends State<LoginPage> {
                                     webAuthenticationOptions: WebAuthenticationOptions(
                                       // TODO : set items from apple developer portal
                                       clientId: 'com.service.hakwongo', // services id
-                                      redirectUri: Uri.parse('http://www.hakwongo.com:3000/auth/callbacks/sign_in_with_apple'),
+                                      redirectUri: Uri.parse('https://hakwongo.com:2052/auth/callbacks/sign_in_with_apple'),
                                     ),
                                     // TODO : Remove these if no need for them
                                     nonce: 'example-nonce',
@@ -339,7 +340,7 @@ class _LoginPageState extends State<LoginPage> {
 ////                                    },
 ////                                  );
                                   final signInWithAppleEndpoint = Uri.encodeFull(
-                                    "http://www.hakwongo.com:3000/auth/sign_in_with_apple?"
+                                    "https://hakwongo.com:2052/auth/sign_in_with_apple?"
                                         + "code=" + credential.authorizationCode.toString()
                                         + "&firstName=" + credential.givenName.toString()
                                         + "&lastName=" + credential.familyName.toString()
@@ -355,11 +356,11 @@ class _LoginPageState extends State<LoginPage> {
 
                                   // If we got this far, a session based on the Apple ID credential has been created in your system,
                                   // and you can now set this as the app's session
-                                  print(session.body);
+                                  print(jsonDecode(session.body)["sessionId"].toString().split(" ")[4]);
 
                                   // TODO : save credential data in device and navigate to main page
                                   final prefs = await SharedPreferences.getInstance();
-                                  prefs.setString('apple', credential.userIdentifier);
+                                  prefs.setString('apple', jsonDecode(session.body)["sessionId"].toString().split(" ")[4]);
 
                                   Navigator.of(context).pushReplacementNamed("/tab");
                                 }
