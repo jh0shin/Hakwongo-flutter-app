@@ -44,7 +44,7 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
   // like for comment
   void _likeComment(AcademyComment cmt) async {
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/comment/like',
+        'https://hakwongo.com:2052/api2/comment/like',
         body: {
           'id' : cmt.id.toString(),
           'user' : cmt.user,
@@ -60,7 +60,7 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
   // delete comment
   void _deleteComment(AcademyComment del) async {
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/comment/delete',
+        'https://hakwongo.com:2052/api2/comment/delete',
         body: {
           'id' : del.id.toString(),
           'user' : del.user,
@@ -76,7 +76,7 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
   // get comment list
   void _getComment() async {
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/comment/get',
+        'https://hakwongo.com:2052/api2/comment/get',
         body: {
           'id' : widget._currentAcademy.id.toString(),
           'limit' : _limit.toString(),
@@ -99,7 +99,7 @@ class _AcademyCommentPageState extends State<AcademyCommentPage> {
   void _getMoreComment() async {
     _offset += _limit;
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/comment/get',
+        'https://hakwongo.com:2052/api2/comment/get',
         body: {
           'id' : widget._currentAcademy.id.toString(),
           'limit' : _limit.toString(),

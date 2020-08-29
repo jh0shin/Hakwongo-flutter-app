@@ -154,7 +154,7 @@ class _LearningTestPageState extends State<LearningTestPage> {
     }
 
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/test/end',
+        'https://hakwongo.com:2052/api2/test/end',
         body: {
           'user' : _user,
           'testtime' : DateTime.now().toString().split(".")[0],

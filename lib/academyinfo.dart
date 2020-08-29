@@ -302,7 +302,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   // check if current academy is already bookmarked
   void _checkBookmark() async {
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/bookmark/check',
+      'https://hakwongo.com:2052/api2/bookmark/check',
       body: {
         'user' : _currentUser,
         'id' : widget._currentAcademy.id.toString(),
@@ -318,7 +318,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   // change bookmark status
   void _changeBookmark() async {
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/bookmark/mark',
+      'https://hakwongo.com:2052/api2/bookmark/mark',
       body: {
         'type' : _isBookmarked ? 'delete' : 'add',
         'user' : _currentUser,
@@ -334,7 +334,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   // like for comment
   void _likeComment(AcademyComment cmt) async {
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/comment/like',
+        'https://hakwongo.com:2052/api2/comment/like',
         body: {
           'id' : cmt.id.toString(),
           'user' : cmt.user,
@@ -351,7 +351,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   // delete comment
   void _deleteComment(AcademyComment del) async {
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/comment/delete',
+        'https://hakwongo.com:2052/api2/comment/delete',
         body: {
           'id' : del.id.toString(),
           'user' : del.user,
@@ -368,7 +368,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   // get number of comment of academy
   void _getCommentNum() async {
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/comment/num',
+        'https://hakwongo.com:2052/api2/comment/num',
         body: {
           'id' : widget._currentAcademy.id.toString(),
         }
@@ -463,7 +463,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
       );
     } else {
       await http.post(
-          'http://hakwongo.com:3000/api2/comment/post',
+          'https://hakwongo.com:2052/api2/comment/post',
           body: {
             'id' : widget._currentAcademy.id.toString(),
             'user' : _currentUser,
@@ -562,7 +562,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   // get comment list
   void _getComment() async {
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/comment/get',
+      'https://hakwongo.com:2052/api2/comment/get',
       body: {
         'id' : widget._currentAcademy.id.toString(),
         'limit' : '3',
@@ -638,7 +638,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   // get academy class information
   void _getClassInfo() async {
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/classinfo',
+      'https://hakwongo.com:2052/api2/classinfo',
       body: {
         'id' : widget._currentAcademy.id.toString(),
       }

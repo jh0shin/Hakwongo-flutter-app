@@ -47,7 +47,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // get user's test
   void _getMyTest() async {
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/test/recent',
+      'https://hakwongo.com:2052/api2/test/recent',
       body: {
         'user' : _loginUser,
         'limit' : _limit.toString(),
@@ -71,7 +71,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
     _testOffset += _limit;
 
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/test/recent',
+        'https://hakwongo.com:2052/api2/test/recent',
         body: {
           'user' : _loginUser,
           'limit' : _limit.toString(),
@@ -98,7 +98,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // get user's comment
   void _getMyComment() async {
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/comment/my',
+      'https://hakwongo.com:2052/api2/comment/my',
       body: {
         'user' : _loginUser,
         'limit' : _limit.toString(),
@@ -120,7 +120,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
     _commentOffset += _limit;
 
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/comment/my',
+      'https://hakwongo.com:2052/api2/comment/my',
       body: {
         'user' : _loginUser,
         'limit' : _limit.toString(),
@@ -147,7 +147,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // get user's bookmark list
   void _getMyBookmark() async {
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/bookmark/my',
+      'https://hakwongo.com:2052/api2/bookmark/my',
       body: {
         'user' : _loginUser,
         'limit' : _limit.toString(),
@@ -172,7 +172,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
     _bookmarkOffset += _limit;
 
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/bookmark/my',
+      'https://hakwongo.com:2052/api2/bookmark/my',
       body: {
         'user' : _loginUser,
         'limit' : _limit.toString(),
@@ -201,7 +201,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // add _bookmarkedAcademy from _myBookmark info
   void _generateBookmarkList(BookmarkedAcademy bookmark) async {
     final response = await http.post(
-      'http://hakwongo.com:3000/api2/search/id',
+      'https://hakwongo.com:2052/api2/search/id',
       body: {
         'id' : bookmark.id.toString(),
       }
@@ -229,7 +229,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // comment button clicked -> goto comment's academy info page
   void _commentClicked(int academyID) async {
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/search/id',
+        'https://hakwongo.com:2052/api2/search/id',
         body: {
           'id' : academyID.toString(),
         }

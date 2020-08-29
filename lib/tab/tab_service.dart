@@ -29,7 +29,7 @@ class _ServicePageState extends State<ServicePage> {
   // check if payed data exists and valid
   void _isValidPaymentExists() async {
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/test/valid',
+        'https://hakwongo.com:2052/api2/test/valid',
         body: {
           'user' : _user,
         }

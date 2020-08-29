@@ -28,7 +28,7 @@ class _ResultPageState extends State<ResultPage> {
   // push pay success data in DB
   void _successPay() async {
     final response = await http.post(
-        'http://hakwongo.com:3000/api2/test/paysuccess',
+        'https://hakwongo.com:2052/api2/test/paysuccess',
         body: {
           'user' : _user,
           'paytime' : DateTime.now().toString().split('.')[0],
