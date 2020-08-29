@@ -895,6 +895,24 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
                                 children: <Widget>[
+                                  // academy_banner
+                                  RawMaterialButton(
+                                    onPressed: () async {
+                                      if (await canLaunch("kakaoplus://plusfriend/home/__rxcIwxb")) {
+                                        await launch("kakaoplus://plusfriend/home/__rxcIwxb");
+                                      } else {
+                                        throw 'Could not launch kakaoplus://plusfriend/home/__rxcIwxb';
+                                      }
+                                    },
+                                    child: Image.asset(
+                                      // logo image
+                                      // image size : 1736 * 233 px
+                                      'assets/image/academy_banner.png',
+                                      width: MediaQuery.of(context).size.width,
+                                      height: MediaQuery.of(context).size.width * (233 / 1736),
+                                    )
+                                  ),
+
                                   // location map (kakao)
                                   SizedBox(
                                     width: screenWidth,

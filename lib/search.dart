@@ -51,7 +51,6 @@ class _SearchPageState extends State<SearchPage> {
         'age' : widget._selectedAge,
       },
     );
-    print(response.body);
     if (response.body != null) {
       final List<AcademyInfo> parsedSearchResult = jsonDecode(response.body)
           .map<AcademyInfo>((json) => AcademyInfo.fromJSON(json))

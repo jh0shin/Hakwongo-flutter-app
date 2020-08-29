@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/userbloc.dart';
 
 import 'package:hwgo/search.dart';
+import 'package:hwgo/tab/tab_main_search.dart';
 
 class TabMainPage extends StatefulWidget {
   @override
@@ -700,6 +701,7 @@ class _TabMainPageState extends State<TabMainPage> {
                         shrinkWrap: true,
                         children: <Widget>[
 
+                          /*
                           // Space ===============
                           SizedBox(
                             width: screenWidth,
@@ -820,7 +822,6 @@ class _TabMainPageState extends State<TabMainPage> {
                               ),
                             ),
                           ),
-
 
                           // subject select
                           SizedBox(
@@ -1353,6 +1354,90 @@ class _TabMainPageState extends State<TabMainPage> {
                             child: Container(color: bgcolor),
                           ),
                           // Space ===============
+                          */
+
+                          
+                          // banner
+                          SizedBox(
+                              width: screenWidth * 0.9,
+                              height: screenWidth * 0.3,
+                              child: Container(
+                                  child: Image.asset(
+                                    // logo image
+                                    // image size : 1924 * 1462 px
+                                    'assets/image/main_banner.png',
+                                    width: MediaQuery.of(context).size.width * 0.5,
+                                    height: MediaQuery.of(context).size.width * 0.5 * (1462 / 1924),
+                                  )
+                              )
+                          ),
+
+                          // Padding
+                          SizedBox(
+                            height: screenWidth * 0.05
+                          ),
+                          
+                          // two buttons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              // search by conditions
+                              SizedBox(
+                                width: screenWidth * 0.45,
+                                height: screenWidth * 0.5,
+                                child: RawMaterialButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context, MaterialPageRoute(
+                                      builder: (context) => SearchByConditionPage())
+                                    );
+                                  },
+                                  child: Container(
+                                      color: Colors.white,
+                                      child: Center(
+                                          child: Text(
+                                            "지역/과목으로 찾기",
+                                            style: TextStyle(
+                                              fontFamily: 'dream5',
+                                              fontSize: screenWidth * 0.038,
+                                              letterSpacing: -2,
+                                              color: Colors.black,
+                                            ),
+                                          )
+                                      )
+                                  ),
+                                )
+                              ),
+                              
+                              // search by name
+                              SizedBox(
+                                width: screenWidth * 0.45,
+                                height: screenWidth * 0.5,
+                                child: RawMaterialButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context, MaterialPageRoute(
+                                      builder: (context) => SearchByNamePage())
+                                    );
+                                  },
+                                  child: Container(
+                                      color: Colors.white,
+                                      child: Center(
+                                          child: Text(
+                                            "이름으로 찾기",
+                                            style: TextStyle(
+                                              fontFamily: 'dream5',
+                                              fontSize: screenWidth * 0.038,
+                                              letterSpacing: -2,
+                                              color: Colors.black,
+                                            ),
+                                          )
+                                      )
+                                  )
+                                )
+                              ),
+                            ],
+                          ),
 
                         ],
                       )
