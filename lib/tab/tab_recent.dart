@@ -225,58 +225,61 @@ class _RecentPageState extends State<RecentPage> {
                                       padding: EdgeInsets.all(screenWidth * 0.02),
                                       child: Column(
                                         children: [
-                                          SizedBox(
-                                              width: screenWidth,
-                                              height: screenWidth * 0.14,
-                                              child: Container(
-                                                color: Colors.white,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    RawMaterialButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          DBHelper().deleteAll();
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        alignment: Alignment.center,
-                                                        width: screenWidth * 0.9,
-                                                        padding: EdgeInsets.all(screenWidth * 0.02),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: <Widget>[
-                                                            Icon(
-                                                              Icons.search,
-                                                              size: screenWidth * 0.05
-                                                            ),
+//                                          // delete recent logs
+//                                          SizedBox(
+//                                              width: screenWidth,
+//                                              height: screenWidth * 0.14,
+//                                              child: Container(
+//                                                color: Colors.white,
+//                                                child: Column(
+//                                                  mainAxisAlignment: MainAxisAlignment.start,
+//                                                  children: <Widget>[
+//                                                    RawMaterialButton(
+//                                                      onPressed: () {
+//                                                        setState(() {
+//                                                          DBHelper().deleteAll();
+//                                                        });
+//                                                      },
+//                                                      child: Container(
+//                                                        alignment: Alignment.center,
+//                                                        width: screenWidth * 0.9,
+//                                                        padding: EdgeInsets.all(screenWidth * 0.02),
+//                                                        child: Row(
+//                                                          mainAxisAlignment: MainAxisAlignment.center,
+//                                                          children: <Widget>[
+//                                                            Icon(
+//                                                              Icons.search,
+//                                                              size: screenWidth * 0.05
+//                                                            ),
+//
+//                                                            Text(
+//                                                                "검색 기록 삭제",
+//                                                                style: TextStyle(
+//                                                                  fontFamily: 'dream4',
+//                                                                  fontSize: screenWidth * 0.05,
+//                                                                  letterSpacing: -2,
+//                                                                  color: Colors.black,
+//                                                                )
+//                                                            )
+//                                                          ],
+//                                                        ),
+//                                                      ),
+//                                                    ),
+//
+//                                                    // Contour line
+//                                                    Container(
+//                                                      width: screenWidth * 0.9,
+//                                                      decoration: BoxDecoration(
+//                                                        border: Border.all(width: 0.5, color: Colors.black26),
+//                                                      ),
+//                                                    ),
+//
+//                                                  ],
+//                                                ),
+//                                              )
+//                                          ),
 
-                                                            Text(
-                                                                "검색 기록 삭제",
-                                                                style: TextStyle(
-                                                                  fontFamily: 'dream4',
-                                                                  fontSize: screenWidth * 0.05,
-                                                                  letterSpacing: -2,
-                                                                  color: Colors.black,
-                                                                )
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-
-                                                    // Contour line
-                                                    Container(
-                                                      width: screenWidth * 0.9,
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(width: 0.5, color: Colors.black26),
-                                                      ),
-                                                    ),
-
-                                                  ],
-                                                ),
-                                              )
-                                          ),
+                                          SizedBox(),
 
                                         ]
                                         + List.generate(_recentAcademy.length, (index) {

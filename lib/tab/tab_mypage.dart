@@ -201,7 +201,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // add _bookmarkedAcademy from _myBookmark info
   void _generateBookmarkList(BookmarkedAcademy bookmark) async {
     final response = await http.post(
-      'https://hakwongo.com:2052/api2/search/id',
+      'https://hakwongo.com:2052/api2/search/corona/id',
       body: {
         'id' : bookmark.id.toString(),
       }
@@ -229,7 +229,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
   // comment button clicked -> goto comment's academy info page
   void _commentClicked(int academyID) async {
     final response = await http.post(
-        'https://hakwongo.com:2052/api2/search/id',
+        'https://hakwongo.com:2052/api2/search/corona/id',
         body: {
           'id' : academyID.toString(),
         }
@@ -802,109 +802,109 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                     ),
                                   ),
 
-                                  // Contour line
-                                  Container(
-                                    width: screenWidth * 0.9,
-                                    margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(width: 0.5, color: Colors.black45),
-                                    ),
-                                  ),
-
-                                  // my learning test
-                                  SizedBox(
-                                    width: screenWidth,
-                                    child: Container(
-                                        padding: EdgeInsets.all(screenWidth * 0.02),
-                                        child: Column(
-                                          children: <Widget>[
-                                            // Title - liked Academy
-                                            Container(
-                                              alignment: Alignment.centerLeft,
-                                              padding: EdgeInsets.all(screenWidth * 0.02),
-                                              child: Text(
-                                                  "내 학습성향검사",
-                                                  style: TextStyle(
-                                                    fontFamily: 'dream5',
-                                                    fontSize: screenWidth * 0.06,
-                                                    letterSpacing: -2,
-                                                    color: Colors.black,
-                                                  )
-                                              ),
-                                            ),
-                                          ]
-
-                                              + List.generate(_myTest.length, (index) {
-                                                return SizedBox(
-                                                  width: screenWidth,
-                                                  child: Container(
-                                                    padding: EdgeInsets.all(screenWidth * 0.02),
-                                                    margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                                    color: commentcolor,
-                                                    child: RawMaterialButton(
-                                                        onPressed: () { /* TODO : Add action */ },
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: <Widget>[
-                                                            // time and like information, delete and like button
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: <Widget>[
-                                                                // time
-                                                                Text(
-                                                                    _myTest[index].testtime + '에 시행한 검사',
-                                                                    style: TextStyle(
-                                                                      fontFamily: 'dream4',
-                                                                      fontSize: screenWidth * 0.04,
-                                                                      letterSpacing: -1,
-                                                                      color: Colors.black45,
-                                                                    )
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        )
-                                                    ),
-                                                  ),
-                                                );
-                                              })
-
-                                              + [
-                                                // show more button
-                                                _isTestLeft
-                                                    ? SizedBox(
-                                                    width: screenWidth * 0.9,
-                                                    height: screenWidth * 0.1,
-                                                    child: RawMaterialButton(
-                                                      onPressed: (){
-                                                        if (_myTestBuffer.length != 0) {
-                                                          setState(() {
-                                                            _myTest.addAll(_myTestBuffer);
-                                                          });
-                                                          _getMoreMyTest();
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        alignment: Alignment.center,
-                                                        width: screenWidth * 0.9,
-                                                        padding: EdgeInsets.all(screenWidth * 0.02),
-                                                        child: Text(
-                                                            "내 학습성향검사 더보기",
-                                                            style: TextStyle(
-                                                              fontFamily: 'dream4',
-                                                              fontSize: screenWidth * 0.05,
-                                                              letterSpacing: -2,
-                                                              color: Colors.black,
-                                                            )
-                                                        ),
-                                                      ),
-                                                    )
-                                                )
-                                                    : SizedBox(),
-                                              ],
-                                        )
-                                    ),
-                                  ),
+//                                  // Contour line
+//                                  Container(
+//                                    width: screenWidth * 0.9,
+//                                    margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+//                                    decoration: BoxDecoration(
+//                                      border: Border.all(width: 0.5, color: Colors.black45),
+//                                    ),
+//                                  ),
+//
+//                                  // my learning test
+//                                  SizedBox(
+//                                    width: screenWidth,
+//                                    child: Container(
+//                                        padding: EdgeInsets.all(screenWidth * 0.02),
+//                                        child: Column(
+//                                          children: <Widget>[
+//                                            // Title - liked Academy
+//                                            Container(
+//                                              alignment: Alignment.centerLeft,
+//                                              padding: EdgeInsets.all(screenWidth * 0.02),
+//                                              child: Text(
+//                                                  "내 학습성향검사",
+//                                                  style: TextStyle(
+//                                                    fontFamily: 'dream5',
+//                                                    fontSize: screenWidth * 0.06,
+//                                                    letterSpacing: -2,
+//                                                    color: Colors.black,
+//                                                  )
+//                                              ),
+//                                            ),
+//                                          ]
+//
+//                                              + List.generate(_myTest.length, (index) {
+//                                                return SizedBox(
+//                                                  width: screenWidth,
+//                                                  child: Container(
+//                                                    padding: EdgeInsets.all(screenWidth * 0.02),
+//                                                    margin: EdgeInsets.only(bottom: screenWidth * 0.02),
+//                                                    color: commentcolor,
+//                                                    child: RawMaterialButton(
+//                                                        onPressed: () { /* TODO : Add action */ },
+//                                                        child: Column(
+//                                                          crossAxisAlignment: CrossAxisAlignment.start,
+//                                                          children: <Widget>[
+//                                                            // time and like information, delete and like button
+//                                                            Row(
+//                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                                                              children: <Widget>[
+//                                                                // time
+//                                                                Text(
+//                                                                    _myTest[index].testtime + '에 시행한 검사',
+//                                                                    style: TextStyle(
+//                                                                      fontFamily: 'dream4',
+//                                                                      fontSize: screenWidth * 0.04,
+//                                                                      letterSpacing: -1,
+//                                                                      color: Colors.black45,
+//                                                                    )
+//                                                                ),
+//                                                              ],
+//                                                            ),
+//                                                          ],
+//                                                        )
+//                                                    ),
+//                                                  ),
+//                                                );
+//                                              })
+//
+//                                              + [
+//                                                // show more button
+//                                                _isTestLeft
+//                                                    ? SizedBox(
+//                                                    width: screenWidth * 0.9,
+//                                                    height: screenWidth * 0.1,
+//                                                    child: RawMaterialButton(
+//                                                      onPressed: (){
+//                                                        if (_myTestBuffer.length != 0) {
+//                                                          setState(() {
+//                                                            _myTest.addAll(_myTestBuffer);
+//                                                          });
+//                                                          _getMoreMyTest();
+//                                                        }
+//                                                      },
+//                                                      child: Container(
+//                                                        alignment: Alignment.center,
+//                                                        width: screenWidth * 0.9,
+//                                                        padding: EdgeInsets.all(screenWidth * 0.02),
+//                                                        child: Text(
+//                                                            "내 학습성향검사 더보기",
+//                                                            style: TextStyle(
+//                                                              fontFamily: 'dream4',
+//                                                              fontSize: screenWidth * 0.05,
+//                                                              letterSpacing: -2,
+//                                                              color: Colors.black,
+//                                                            )
+//                                                        ),
+//                                                      ),
+//                                                    )
+//                                                )
+//                                                    : SizedBox(),
+//                                              ],
+//                                        )
+//                                    ),
+//                                  ),
 
                                 ],
                               ),

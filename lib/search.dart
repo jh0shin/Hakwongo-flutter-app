@@ -37,17 +37,27 @@ class _SearchPageState extends State<SearchPage> {
   int _limit = 10;
   bool _moreResultLeft = true;
 
+  // subject query
+  var _subject = {
+    '전체' : '',
+    '입시/검정/보습' : '입시',
+    '예능' : '예능',
+    '국제화' : '국제화',
+    '독서실' : '독서실',
+    '기타' : '기타'       // TODO : 다른 카테고리 안보이도록 db data 수정.
+  };
+
   // post http request for given conditions
   void _getSearchResult() async {
     final response = await http.post(
-      'https://hakwongo.com:2052/api2/search/init',
+      'https://hakwongo.com:2052/api2/search/corona/init',
       body: {
         'limit' : _limit.toString(),
         'offset' : _offset.toString(),
         'sido' : widget._selectedSido,
         'gungu' : widget._selectedGungu,
         'dong' : widget._selectedDong,
-        'subject' : widget._selectedSubject,
+        'subject' : _subject[widget._selectedSubject],
         'age' : widget._selectedAge,
       },
     );
@@ -67,16 +77,66 @@ class _SearchPageState extends State<SearchPage> {
     _offset += 1;
 
     final response = await http.post(
-      'https://hakwongo.com:2052/api2/search/init',
+      'https://hakwongo.com:2052/api2/search/corona/init',
       body: {
         'limit' : _limit.toString(),
         'offset' : (_offset * _limit).toString(),
         'sido' : widget._selectedSido,
         'gungu' : widget._selectedGungu,
         'dong' : widget._selectedDong,
-        'subject' : widget._selectedSubject,
+        'subject' : _subject[widget._selectedSubject],
         'age' : widget._selectedAge,
       }
+    );
+    print(response.body);
+    if (response.body == '[]') {  // no more data
+      setState(() {
+        _searchResultBuffer.clear();
+        _moreResultLeft = false;
+      });
+    } else {                      // more data exists
+      final List<AcademyInfo> parsedSearchResult = jsonDecode(response.body)
+          .map<AcademyInfo>((json) => AcademyInfo.fromJSON(json))
+          .toList();
+      setState(() {
+        _searchResultBuffer.clear();
+        _searchResultBuffer.addAll(parsedSearchResult);
+      });
+    }
+  }
+
+  // post http request for given conditions
+  void _getNameSearchResult() async {
+    final response = await http.post(
+      'https://hakwongo.com:2052/api2/search/corona/name',
+      body: {
+        'limit' : _limit.toString(),
+        'offset' : _offset.toString(),
+        'name' : widget._selectedAge,
+      },
+    );
+    if (response.body != null) {
+      final List<AcademyInfo> parsedSearchResult = jsonDecode(response.body)
+          .map<AcademyInfo>((json) => AcademyInfo.fromJSON(json))
+          .toList();
+      setState(() {
+        _searchResult.clear();
+        _searchResult.addAll(parsedSearchResult);
+      });
+    }
+  }
+
+  // get more search result
+  void _getNameMoreSearchResult() async {
+    _offset += 1;
+
+    final response = await http.post(
+        'https://hakwongo.com:2052/api2/search/corona/name',
+        body: {
+          'limit' : _limit.toString(),
+          'offset' : (_offset * _limit).toString(),
+          'name' : widget._selectedAge,
+        }
     );
     print(response.body);
     if (response.body == '[]') {  // no more data
@@ -107,8 +167,14 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    _getSearchResult();
-    _getMoreSearchResult();
+    if (widget._selectedSido != '') {
+      _getSearchResult();
+      _getMoreSearchResult();
+    }
+    else {
+      _getNameSearchResult();
+      _getNameMoreSearchResult();
+    }
   }
 
   /* TODO: 검색 결과 없을 시 없다고 화면에 표시 */
@@ -180,41 +246,41 @@ class _SearchPageState extends State<SearchPage> {
                       ],
                     ),
 
-                    SizedBox(
-                        width: screenWidth,
-                        height: screenWidth * 0.12,
-                        child: Container(
-                          color: Colors.white,
-                          child: Column(
-                            children: <Widget>[
-                              Expanded(
-                                child: Center(
-                                    child: Text(
-                                      '필터 :   ' + widget._selectedSido + ' ' + widget._selectedGungu + ' '
-                                          + widget._selectedDong + '   /   ' + widget._selectedSubject + '   /   '
-                                          + widget._selectedAge + '등',
-                                      style: TextStyle(
-                                        fontFamily: 'dream5',
-                                        fontSize: screenWidth * 0.038,
-                                        letterSpacing: -2,
-                                        color: Colors.black,
-                                      ),
-                                    )
-                                ),
-                              ),
-
-                              // Contour line
-                              Container(
-                                width: screenWidth * 0.9,
-                                decoration: BoxDecoration(
-                                  border: Border.all(width: 0.5, color: Colors.black26),
-                                ),
-                              ),
-
-                            ],
-                          ),
-                        )
-                    ),
+//                    SizedBox(
+//                        width: screenWidth,
+//                        height: screenWidth * 0.12,
+//                        child: Container(
+//                          color: Colors.white,
+//                          child: Column(
+//                            children: <Widget>[
+//                              Expanded(
+//                                child: Center(
+//                                    child: Text(
+//                                      '필터 :   ' + widget._selectedSido + ' ' + widget._selectedGungu + ' '
+//                                          + widget._selectedDong + '   /   ' + widget._selectedSubject + '   /   '
+//                                          + widget._selectedAge + '등',
+//                                      style: TextStyle(
+//                                        fontFamily: 'dream5',
+//                                        fontSize: screenWidth * 0.038,
+//                                        letterSpacing: -2,
+//                                        color: Colors.black,
+//                                      ),
+//                                    )
+//                                ),
+//                              ),
+//
+//                              // Contour line
+//                              Container(
+//                                width: screenWidth * 0.9,
+//                                decoration: BoxDecoration(
+//                                  border: Border.all(width: 0.5, color: Colors.black26),
+//                                ),
+//                              ),
+//
+//                            ],
+//                          ),
+//                        )
+//                    ),
 
                     Expanded(
                       child: Container(
@@ -223,7 +289,22 @@ class _SearchPageState extends State<SearchPage> {
                         child: ListView(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                          children: List.generate(_searchResult.length, (index) {
+                          children: _searchResult.length == 0
+                            ? [
+                              Container(
+                                child: Center(
+                                  child: Text("\n검색 결과가 없습니다.",
+                                      style: TextStyle(
+                                          fontFamily: 'dream5',
+                                          fontSize: screenWidth * 0.06,
+                                          letterSpacing: -2,
+                                          color: Colors.black
+                                      )
+                                  )
+                                )
+                              )
+                            ]
+                            : List.generate(_searchResult.length, (index) {
                             return SizedBox(
                                 width: screenWidth * 0.9,
                                 height: screenWidth * 0.2,
@@ -238,9 +319,16 @@ class _SearchPageState extends State<SearchPage> {
                                             children: <Widget>[
                                               Flexible(
                                                 flex: 1,
-                                                child: Image.asset(
+                                                child: _searchResult[index].age == '교습소'
+                                                    ? Image.asset(
                                                   // 1924 * 1462 px
-                                                  'assets/image/logo.png',
+                                                  'assets/image/logo_green.png',
+                                                  width: screenWidth * 0.2,
+                                                  height: screenWidth * 0.15,
+                                                )
+                                                    : Image.asset(
+                                                  // 1924 * 1462 px
+                                                  'assets/image/logo_red.png',
                                                   width: screenWidth * 0.2,
                                                   height: screenWidth * 0.15,
                                                 ),
@@ -312,7 +400,10 @@ class _SearchPageState extends State<SearchPage> {
                                             setState(() {
                                               _searchResult.addAll(_searchResultBuffer);
                                             });
-                                            _getMoreSearchResult();
+                                            if (widget._selectedSido != '')
+                                              _getMoreSearchResult();
+                                            else
+                                              _getNameMoreSearchResult();
                                           }
                                         },
                                         child: Container(

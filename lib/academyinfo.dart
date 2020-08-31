@@ -898,18 +898,18 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                   // academy_banner
                                   RawMaterialButton(
                                     onPressed: () async {
-                                      if (await canLaunch("kakaoplus://plusfriend/home/__rxcIwxb")) {
-                                        await launch("kakaoplus://plusfriend/home/__rxcIwxb");
+                                      if (await canLaunch("http://pf.kakao.com/_rxcIwxb/chat")) {
+                                        await launch("http://pf.kakao.com/_rxcIwxb/chat");
                                       } else {
-                                        throw 'Could not launch kakaoplus://plusfriend/home/__rxcIwxb';
+                                        throw 'Could not launch http://pf.kakao.com/_rxcIwxb/chat';
                                       }
                                     },
                                     child: Image.asset(
                                       // logo image
-                                      // image size : 1736 * 233 px
+                                      // image size : 1767 * 271 px
                                       'assets/image/academy_banner.png',
                                       width: MediaQuery.of(context).size.width,
-                                      height: MediaQuery.of(context).size.width * (233 / 1736),
+                                      height: MediaQuery.of(context).size.width * (271 / 1767),
                                     )
                                   ),
 
@@ -1003,6 +1003,19 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                         ),
                                       )
                                     ),
+                                  ),
+
+                                  // guide text
+                                  Center(
+                                    child: Text(
+                                      "지도 이미지를 클릭하면 지도 앱에서 확인할 수 있습니다.",
+                                      style: TextStyle(
+                                        fontFamily: 'dream5',
+                                        fontSize: screenWidth * 0.038,
+                                        letterSpacing: -2,
+                                        color: Colors.black38,
+                                      ),
+                                    )
                                   ),
 
                                   // location info
@@ -1157,177 +1170,42 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                           // padding
                                           SizedBox(height: screenWidth * 0.02),
 
-                                          // class information title
-                                          Text(
-                                              '강의 정보',
-                                              style: TextStyle(
-                                                fontFamily: 'dream4',
-                                                fontSize: screenWidth * 0.06,
-                                                letterSpacing: -2,
-                                                color: Colors.black,
+                                          // GUIDE TEXT
+                                          Row(
+                                            children: <Widget>[
+                                              // logo
+                                              widget._currentAcademy.age == '교습소'
+                                                  ? Image.asset(
+                                                // 1924 * 1462 px
+                                                'assets/image/logo_green.png',
+                                                width: screenWidth * 0.2,
+                                                height: screenWidth * 0.15,
                                               )
-                                          ),
-
-                                          // padding
-                                          SizedBox(height: screenWidth * 0.02),
-                                        ]
-                                        // class information
-                                        + List.generate(_classInfo.length < _classLimit
-                                            ? _classInfo.length : _classLimit, (index) {
-                                          AcademyClass tmp = _classInfo[index];
-
-                                          return Container(
-                                            padding: EdgeInsets.all(screenWidth * 0.02),
-                                            margin: EdgeInsets.only(bottom: screenWidth * 0.02),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                width: 1,
-                                                color: Colors.black26
+                                                  : Image.asset(
+                                                // 1924 * 1462 px
+                                                'assets/image/logo_red.png',
+                                                width: screenWidth * 0.2,
+                                                height: screenWidth * 0.15,
                                               ),
-                                              borderRadius: BorderRadius.circular(5),
-                                            ),
-                                            child: RawMaterialButton(
-                                              onPressed: () => _classInfoClicked(_classInfo[index]),
-                                              child: Column(
-                                                children: <Widget>[
-                                                  // class name and age
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        tmp.classname,
-                                                        style: TextStyle(
-                                                          fontFamily: 'dream5',
-                                                          fontSize: screenWidth * 0.05,
-                                                          letterSpacing: -1,
-                                                          color: Colors.black,
-                                                        ),
-                                                      ),
 
-                                                      Text(
-                                                        tmp.age + '  ',
-                                                        style: TextStyle(
-                                                          fontFamily: 'dream3',
-                                                          fontSize: screenWidth * 0.04,
-                                                          letterSpacing: -1,
-                                                          color: Colors.black,
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-
-                                                  // padding
-                                                  SizedBox(
-                                                    height: screenWidth * 0.02,
-                                                  ),
-
-                                                  // class time
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.access_time,
-                                                        size: screenWidth * 0.05,
-                                                      ),
-
-                                                      // padding
-                                                      SizedBox(
-                                                        width: screenWidth * 0.01,
-                                                      ),
-
-                                                      Text(
-                                                        (int.parse(tmp.totaltime) ~/ 60).toString() + '시간 ' + (int.parse(tmp.totaltime) % 60).toString()
-                                                            + '분 / ' + tmp.time,
-                                                        style: TextStyle(
-                                                          fontFamily: 'dream4',
-                                                          fontSize: screenWidth * 0.04,
-                                                          letterSpacing: -1,
-                                                          color: Colors.black,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-
-                                                  // padding
-                                                  SizedBox(
-                                                    height: screenWidth * 0.01,
-                                                  ),
-
-                                                  // class size, cost
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                    children: <Widget>[
-                                                      Icon(
-                                                        Icons.person,
-                                                        size: screenWidth * 0.05,
-                                                      ),
-
-                                                      // padding
-                                                      SizedBox(
-                                                        width: screenWidth * 0.01,
-                                                      ),
-
-                                                      Text(
-                                                        tmp.size,
-                                                        style: TextStyle(
-                                                          fontFamily: 'dream4',
-                                                          fontSize: screenWidth * 0.04,
-                                                          letterSpacing: -1,
-                                                          color: Colors.black,
-                                                        ),
-                                                      ),
-
-                                                      // padding
-                                                      SizedBox(
-                                                        width: screenWidth * 0.03,
-                                                      ),
-
-                                                      Icon(
-                                                        Icons.attach_money,
-                                                        size: screenWidth * 0.05,
-                                                      ),
-
-                                                      // padding
-                                                      SizedBox(
-                                                        width: screenWidth * 0.01,
-                                                      ),
-
-                                                      Text(
-                                                        (int.parse(tmp.cost1)+ int.parse(tmp.cost2) + int.parse(tmp.cost3) + int.parse(tmp.cost4)
-                                                            + int.parse(tmp.cost5) + int.parse(tmp.cost6) + int.parse(tmp.cost7)).toString(),
-                                                        style: TextStyle(
-                                                          fontFamily: 'dream4',
-                                                          fontSize: screenWidth * 0.04,
-                                                          letterSpacing: -1,
-                                                          color: Colors.black,
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ],
-                                              )
-                                            )
-                                          );
-                                            })
-                                        + [
-                                          // show more class info button
-                                          _classLimit >= _classInfo.length
-                                            ? SizedBox()
-                                            : SizedBox(
-                                              width: screenWidth * 0.9,
-                                              height: screenWidth * 0.1,
-                                              child: RawMaterialButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _classLimit += 5;
-                                                  });
-                                                },
+                                              // guide text
+                                              SizedBox(
+                                                width: screenWidth * 0.7,
+                                                height: screenWidth * 0.15,
                                                 child: Container(
-                                                  alignment: Alignment.center,
-                                                  width: screenWidth * 0.9,
-                                                  padding: EdgeInsets.all(screenWidth * 0.02),
-                                                  child: Text(
-                                                      "학원 수업 정보 더보기",
+                                                  alignment: Alignment.centerLeft,
+                                                  child: widget._currentAcademy.age == '교습소'
+                                                      ? Text(
+                                                      '해당 교습소는 코로나 2.5단계 격상으로 인한 대면 강의 가능 교습소입니다.',
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream4',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                                      : Text(
+                                                      '해당 학원은 코로나 2.5단계 격상으로 인한 대면 강의 불가능 학원입니다.',
                                                       style: TextStyle(
                                                         fontFamily: 'dream4',
                                                         fontSize: screenWidth * 0.05,
@@ -1335,10 +1213,197 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                                         color: Colors.black,
                                                       )
                                                   ),
-                                                ),
+                                                )
                                               )
-                                          )
-                                        ],
+
+                                            ],
+                                          ),
+
+                                          // padding
+                                          SizedBox(height: screenWidth * 0.02),
+
+//                                          // class information title
+//                                          Text(
+//                                              '강의 정보',
+//                                              style: TextStyle(
+//                                                fontFamily: 'dream4',
+//                                                fontSize: screenWidth * 0.06,
+//                                                letterSpacing: -2,
+//                                                color: Colors.black,
+//                                              )
+//                                          ),
+
+                                          // padding
+                                          SizedBox(height: screenWidth * 0.02),
+                                        ]
+//                                        // class information
+//                                        + List.generate(_classInfo.length < _classLimit
+//                                            ? _classInfo.length : _classLimit, (index) {
+//                                          AcademyClass tmp = _classInfo[index];
+//
+//                                          return Container(
+//                                            padding: EdgeInsets.all(screenWidth * 0.02),
+//                                            margin: EdgeInsets.only(bottom: screenWidth * 0.02),
+//                                            decoration: BoxDecoration(
+//                                              border: Border.all(
+//                                                width: 1,
+//                                                color: Colors.black26
+//                                              ),
+//                                              borderRadius: BorderRadius.circular(5),
+//                                            ),
+//                                            child: RawMaterialButton(
+//                                              onPressed: () => _classInfoClicked(_classInfo[index]),
+//                                              child: Column(
+//                                                children: <Widget>[
+//                                                  // class name and age
+//                                                  Row(
+//                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                                                    children: <Widget>[
+//                                                      Text(
+//                                                        tmp.classname,
+//                                                        style: TextStyle(
+//                                                          fontFamily: 'dream5',
+//                                                          fontSize: screenWidth * 0.05,
+//                                                          letterSpacing: -1,
+//                                                          color: Colors.black,
+//                                                        ),
+//                                                      ),
+//
+//                                                      Text(
+//                                                        tmp.age + '  ',
+//                                                        style: TextStyle(
+//                                                          fontFamily: 'dream3',
+//                                                          fontSize: screenWidth * 0.04,
+//                                                          letterSpacing: -1,
+//                                                          color: Colors.black,
+//                                                        ),
+//                                                      )
+//                                                    ],
+//                                                  ),
+//
+//                                                  // padding
+//                                                  SizedBox(
+//                                                    height: screenWidth * 0.02,
+//                                                  ),
+//
+//                                                  // class time
+//                                                  Row(
+//                                                    mainAxisAlignment: MainAxisAlignment.end,
+//                                                    children: <Widget>[
+//                                                      Icon(
+//                                                        Icons.access_time,
+//                                                        size: screenWidth * 0.05,
+//                                                      ),
+//
+//                                                      // padding
+//                                                      SizedBox(
+//                                                        width: screenWidth * 0.01,
+//                                                      ),
+//
+//                                                      Text(
+//                                                        (int.parse(tmp.totaltime) ~/ 60).toString() + '시간 ' + (int.parse(tmp.totaltime) % 60).toString()
+//                                                            + '분 / ' + tmp.time,
+//                                                        style: TextStyle(
+//                                                          fontFamily: 'dream4',
+//                                                          fontSize: screenWidth * 0.04,
+//                                                          letterSpacing: -1,
+//                                                          color: Colors.black,
+//                                                        ),
+//                                                      ),
+//                                                    ],
+//                                                  ),
+//
+//                                                  // padding
+//                                                  SizedBox(
+//                                                    height: screenWidth * 0.01,
+//                                                  ),
+//
+//                                                  // class size, cost
+//                                                  Row(
+//                                                    mainAxisAlignment: MainAxisAlignment.end,
+//                                                    children: <Widget>[
+//                                                      Icon(
+//                                                        Icons.person,
+//                                                        size: screenWidth * 0.05,
+//                                                      ),
+//
+//                                                      // padding
+//                                                      SizedBox(
+//                                                        width: screenWidth * 0.01,
+//                                                      ),
+//
+//                                                      Text(
+//                                                        tmp.size,
+//                                                        style: TextStyle(
+//                                                          fontFamily: 'dream4',
+//                                                          fontSize: screenWidth * 0.04,
+//                                                          letterSpacing: -1,
+//                                                          color: Colors.black,
+//                                                        ),
+//                                                      ),
+//
+//                                                      // padding
+//                                                      SizedBox(
+//                                                        width: screenWidth * 0.03,
+//                                                      ),
+//
+//                                                      Icon(
+//                                                        Icons.attach_money,
+//                                                        size: screenWidth * 0.05,
+//                                                      ),
+//
+//                                                      // padding
+//                                                      SizedBox(
+//                                                        width: screenWidth * 0.01,
+//                                                      ),
+//
+//                                                      Text(
+//                                                        (int.parse(tmp.cost1)+ int.parse(tmp.cost2) + int.parse(tmp.cost3) + int.parse(tmp.cost4)
+//                                                            + int.parse(tmp.cost5) + int.parse(tmp.cost6) + int.parse(tmp.cost7)).toString(),
+//                                                        style: TextStyle(
+//                                                          fontFamily: 'dream4',
+//                                                          fontSize: screenWidth * 0.04,
+//                                                          letterSpacing: -1,
+//                                                          color: Colors.black,
+//                                                        ),
+//                                                      )
+//                                                    ],
+//                                                  ),
+//                                                ],
+//                                              )
+//                                            )
+//                                          );
+//                                            })
+//                                        + [
+//                                          // show more class info button
+//                                          _classLimit >= _classInfo.length
+//                                            ? SizedBox()
+//                                            : SizedBox(
+//                                              width: screenWidth * 0.9,
+//                                              height: screenWidth * 0.1,
+//                                              child: RawMaterialButton(
+//                                                onPressed: () {
+//                                                  setState(() {
+//                                                    _classLimit += 5;
+//                                                  });
+//                                                },
+//                                                child: Container(
+//                                                  alignment: Alignment.center,
+//                                                  width: screenWidth * 0.9,
+//                                                  padding: EdgeInsets.all(screenWidth * 0.02),
+//                                                  child: Text(
+//                                                      "학원 수업 정보 더보기",
+//                                                      style: TextStyle(
+//                                                        fontFamily: 'dream4',
+//                                                        fontSize: screenWidth * 0.05,
+//                                                        letterSpacing: -2,
+//                                                        color: Colors.black,
+//                                                      )
+//                                                  ),
+//                                                ),
+//                                              )
+//                                          )
+//                                        ],
                                       ),
                                     ),
                                   ),
