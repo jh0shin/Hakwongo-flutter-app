@@ -1196,7 +1196,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                                   alignment: Alignment.centerLeft,
                                                   child: widget._currentAcademy.age == '교습소'
                                                       ? Text(
-                                                      '해당 교습소는 방역 수칙 준수를 전제로 대면 수업이 허용됩니다.',
+                                                      '해당 교습소는 코로나 2.5단계 격상으로 인한 대면 강의 가능 교습소입니다.',
                                                       style: TextStyle(
                                                         fontFamily: 'dream4',
                                                         fontSize: screenWidth * 0.05,
@@ -1205,7 +1205,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                                       )
                                                   )
                                                       : Text(
-                                                      '해당 학원은 사회적 거리두기 2.5단계 격상으로 인해 대면 강의가 불가합니다.',
+                                                      '해당 학원은 코로나 2.5단계 격상으로 인한 대면 강의 불가능 학원입니다.',
                                                       style: TextStyle(
                                                         fontFamily: 'dream4',
                                                         fontSize: screenWidth * 0.05,
