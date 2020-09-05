@@ -6,6 +6,7 @@ import 'package:hwgo/academycomment.dart';
 
 // user info bloc
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/userbloc.dart';
 
 // rest api request
@@ -67,6 +68,9 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
 
   // already bookmarked?
   bool _isBookmarked = false;
+
+  // user info
+  SharedPreferences _pref;
 
   // init textfield controller
   TextEditingController _controller = TextEditingController();
@@ -785,12 +789,24 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
     );
   }
 
+  // check User
+  void _checkUser () async {
+    _pref = await SharedPreferences.getInstance();
+    _currentUser = _pref.getString('apple') ?? BlocProvider.of<UserBloc>(context).currentState.toString()
+        .split(",")[0].split(": ")[1];
+
+    _checkBookmark();
+
+    print(_currentUser);
+  }
+
   @override
   void initState() {
     super.initState();
 
     DBHelper().createData(widget._currentAcademy);
 
+    _checkUser();
     _getClassInfo();
     _getComment();
     _getCommentNum();
@@ -810,14 +826,6 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   Widget build(BuildContext context) => BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         double screenWidth = MediaQuery.of(context).size.width;
-
-        if (state is UserFetched) {
-          if (_currentUser == null) {
-            _currentUser = state.user.id.toString();
-            _checkBookmark();
-          }
-          _currentUser = state.user.id.toString();
-        }
 
         // back button handler
         // ignore: missing_return

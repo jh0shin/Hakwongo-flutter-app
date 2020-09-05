@@ -7,6 +7,7 @@ import 'package:hwgo/settings.dart';
 
 // rest api request
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import 'bloc/userbloc.dart';
@@ -24,6 +25,8 @@ class _LearningTestPageState extends State<LearningTestPage> {
   List<int> _result = [];
   String _resultString = '';
 
+  // user info
+  SharedPreferences _pref;
   String _user;
 
   // question index
@@ -185,10 +188,17 @@ class _LearningTestPageState extends State<LearningTestPage> {
     });
   }
 
+  void _checkUser () async {
+    _pref = await SharedPreferences.getInstance();
+    _user = _pref.getString('apple') ?? BlocProvider.of<UserBloc>(context).currentState.toString()
+        .split(",")[0].split(": ")[1];
+  }
+
   @override
   void initState() {
     super.initState();
 
+    _checkUser();
     _getFields();
 
     // get logged in user id from UserBloc
