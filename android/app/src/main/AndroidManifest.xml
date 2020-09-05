@@ -19,6 +19,21 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <!-- app links -->
+            <!--<intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+
+                &lt;!&ndash; accept uris that begin with HAKWONGO:// &ndash;&gt;
+                <data
+                    android:scheme="hakwongo"/>
+            </intent-filter>-->
+
             <!-- Set up the Sign in with Apple activity, such that it's callable from the browser-redirect -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -27,25 +42,6 @@
 
                 <data android:scheme="signinwithapple" />
                 <data android:path="callback" />
-            </intent-filter>
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-
-                <!-- accept uris that begin with HAKWONGO:// -->
-                <data
-                    android:scheme="hakwongo"/>
-            </intent-filter>
-
-            <!-- app links -->
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-
-                <!-- accept uris that begin with HAKWONGO:// -->
-                <data
-                    android:scheme="hakwongo"/>
             </intent-filter>
         </activity>
 

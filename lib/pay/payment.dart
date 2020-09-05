@@ -68,6 +68,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       'amount': 100,
                       'buyer_tel': '01048033704',
                       'appScheme': 'hakwongo://result',
+                      // TODO : check callback scheme work well ( delete from AndroidManifest )
                     }),
 
                     // callback
