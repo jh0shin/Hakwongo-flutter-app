@@ -10,10 +10,6 @@ import 'package:kakao_flutter_sdk/auth.dart';
 import 'package:kakao_flutter_sdk/common.dart';
 import 'package:kakao_flutter_sdk/user.dart';
 
-// apple login
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 // bloc
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hwgo/bloc/userbloc.dart';
@@ -299,113 +295,6 @@ class _LoginPageState extends State<LoginPage> {
                           Padding(
                             padding: EdgeInsets.all(screenWidth * 0.015),
                           ),
-
-                          // apple login button
-                          SizedBox(
-                            width: screenWidth * 0.8,
-                            height: screenWidth * 0.8 * (49 / 300),
-                            child: SignInWithAppleButton(
-                                onPressed: () async {
-                                  if (_isPolicyChecked == true) {
-                                    final credential = await SignInWithApple.getAppleIDCredential(
-                                      scopes: [
-                                        AppleIDAuthorizationScopes.email,
-                                        AppleIDAuthorizationScopes.fullName,
-                                      ],
-                                      webAuthenticationOptions: WebAuthenticationOptions(
-                                        // TODO : set items from apple developer portal
-                                        clientId: 'com.service.hakwongo', // services id
-                                        redirectUri: Uri.parse('https://hakwongo.com:2052/auth/callbacks/sign_in_with_apple'),
-                                      ),
-                                      // TODO : Remove these if no need for them
-                                      nonce: 'example-nonce',
-                                      state: 'example-state',
-                                    );
-
-                                    print(credential);
-
-                                    // This is the endpoint that will convert an authorization code obtained
-                                    // via Sign in with Apple into a session in your system
-//                                  final signInWithAppleEndpoint = Uri(
-////                                    scheme: 'http',
-////                                    host: 'www.hakwongo.com',
-////                                    path: ':3000/auth/sign_in_with_apple',
-////                                    queryParameters: <String, String>{
-////                                      'code': credential.authorizationCode,
-////                                      'firstName': credential.givenName,
-////                                      'lastName': credential.familyName,
-////                                      'useBundleId':
-////                                      Platform.isIOS || Platform.isMacOS ? 'true' : 'false',
-////                                      // if (credential.state != null) 'state': credential.state,
-////                                      'state': credential.state
-////                                    },
-////                                  );
-                                    final signInWithAppleEndpoint = Uri.encodeFull(
-                                        "https://hakwongo.com:2052/auth/sign_in_with_apple?"
-                                            + "code=" + credential.authorizationCode.toString()
-                                            + "&firstName=" + credential.givenName.toString()
-                                            + "&lastName=" + credential.familyName.toString()
-                                            + "&useBundleId=" + (Platform.isIOS || Platform.isMacOS ? 'true' : 'false')
-                                            + "&state=" + credential.state.toString()
-                                    );
-
-                                    print(signInWithAppleEndpoint);
-
-                                    final session = await http.Client().post(
-                                      signInWithAppleEndpoint,
-                                    );
-
-                                    // If we got this far, a session based on the Apple ID credential has been created in your system,
-                                    // and you can now set this as the app's session
-                                    print(jsonDecode(session.body)["sessionId"].toString().split(" ")[4]);
-
-                                    // TODO : save credential data in device and navigate to main page
-                                    final prefs = await SharedPreferences.getInstance();
-                                    prefs.setString('apple', jsonDecode(session.body)["sessionId"].toString().split(" ")[4]);
-
-                                    Navigator.of(context).pushReplacementNamed("/tab");
-                                  } else {
-                                    _policyNotChecked();
-                                  }
-                                }
-                            ),
-                          ),
-
-//                          Padding(
-//                            padding: EdgeInsets.all(screenWidth * 0.02),
-//                          ),
-//
-//                          RawMaterialButton(
-//                            onPressed: () async {
-//                              // save dummy user data in sharedPreferences
-//                              final prefs = await SharedPreferences.getInstance();
-//                              prefs.setString('apple', '비회원');
-//
-//                              Navigator.of(context).pushReplacementNamed("/tab");
-//                            },
-//                            child: SizedBox(
-//                              width: screenWidth * 0.8,
-//                              height: screenWidth * 0.8 * (49 / 300),
-//                              child: Container(
-//                                decoration: BoxDecoration(
-//                                  borderRadius: BorderRadius.circular(5),
-//                                  color: btncolor,
-//                                ),
-//                                child: Center(
-//                                  child: Text(
-//                                    "비회원으로 이용하기",
-//                                    textAlign: TextAlign.center,
-//                                    style: TextStyle(
-//                                        fontFamily: 'dream3',
-//                                        fontSize: screenWidth * 0.04,
-//                                        letterSpacing: -1,
-//                                        color: Colors.white
-//                                    ),
-//                                  )
-//                                )
-//                              )
-//                            )
-//                          ),
 
                           // private policy agree
                           Container(

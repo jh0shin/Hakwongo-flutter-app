@@ -371,10 +371,32 @@ class _MyInfoPageState extends State<MyInfoPage> {
     );
   }
 
-  void _checkUser () async {
-    _pref = await SharedPreferences.getInstance();
-    _loginUser = _pref.getString('apple') ?? BlocProvider.of<UserBloc>(context).currentState.toString()
-        .split(",")[0].split(": ")[1];
+//  void _checkUser () async {
+//    _pref = await SharedPreferences.getInstance();
+//    _loginUser = _pref.getString('apple') ?? BlocProvider.of<UserBloc>(context).currentState.toString()
+//        .split(",")[0].split(": ")[1];
+//
+//    _getMyBookmark();
+//    _getMoreBookmark();
+//    _getMyComment();
+//    _getMoreMyComment();
+//    _getMyTest();
+//    _getMoreMyTest();
+//
+//    print(_loginUser);
+//  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // _checkUser();
+    try {
+      _loginUser = BlocProvider.of<UserBloc>(context).currentState.toString()
+          .split(",")[0].split(": ")[1];
+    } catch(e) {
+      _loginUser = '비회원';
+    }
 
     _getMyBookmark();
     _getMoreBookmark();
@@ -382,15 +404,6 @@ class _MyInfoPageState extends State<MyInfoPage> {
     _getMoreMyComment();
     _getMyTest();
     _getMoreMyTest();
-
-    print(_loginUser);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _checkUser();
   }
   /*
   TODO : 내가 쓴 댓글에서 클릭하여 학원 페이지로 넘어갔다가 댓글 작성 후
@@ -474,7 +487,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                             flex: 1,
                                             child: CircleAvatar(
                                               radius: screenWidth * 0.07,
-                                              backgroundImage: _pref.containsKey('apple')
+                                              backgroundImage: _loginUser == '비회원'
                                                 ? AssetImage("assets/image/logo.png")
                                                 : (_user.properties.containsKey("profile_image")
                                                   ? NetworkImage(_user.properties["profile_image"])
@@ -489,7 +502,9 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                               child: Container(
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
-                                                    _pref.getString('apple') ?? _user.properties["nickname"],
+                                                    _loginUser == '비회원'
+                                                      ? '비회원'
+                                                      : _user.properties["nickname"],
                                                     style: TextStyle(
                                                       fontFamily: 'dream3',
                                                       fontSize: screenWidth * 0.05,
@@ -500,16 +515,38 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                               )
                                           ),
 
-                                          // logout button
+                                          // login & logout button
                                           Flexible(
                                               flex: 1,
-                                              child: RawMaterialButton(
+                                              child: _loginUser == '비회원'
+                                                ? RawMaterialButton(
                                                   onPressed: (){
-                                                    if (_pref.containsKey('apple'))
-                                                      _pref.clear();
-                                                    else
-                                                      bloc.dispatch(UserLogOut());
                                                     Navigator.of(context).pushReplacementNamed("/login");
+                                                  },
+                                                  child: Container(
+                                                    width: screenWidth * 0.2,
+                                                    height: screenWidth * 0.1,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.circular(5),
+                                                      color: Colors.black45,
+                                                    ),
+                                                    child: Center(
+                                                        child: Text(
+                                                            "로그인",
+                                                            style: TextStyle(
+                                                              fontFamily: 'dream4',
+                                                              fontSize: screenWidth * 0.04,
+                                                              letterSpacing: -2,
+                                                              color: Colors.white,
+                                                            )
+                                                        )
+                                                    ),
+                                                  )
+                                              )
+                                                : RawMaterialButton(
+                                                  onPressed: (){
+                                                    bloc.dispatch(UserLogOut());
+                                                    Navigator.of(context).pushReplacementNamed("/");
                                                   },
                                                   child: Container(
                                                     width: screenWidth * 0.2,
@@ -567,6 +604,22 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                   )
                                               ),
                                             ),
+
+                                            _loginUser == '비회원'
+                                              ? Container(
+                                              child: Center(
+                                                child: Text(
+                                                    "로그인 후 이용할 수 있는 기능입니다.",
+                                                    style: TextStyle(
+                                                      fontFamily: 'dream3',
+                                                      fontSize: screenWidth * 0.05,
+                                                      letterSpacing: -2,
+                                                      color: Colors.black,
+                                                    )
+                                                )
+                                              )
+                                            )
+                                              : Container()
                                           ]
 
                                               // my bookmarked academy
@@ -711,6 +764,22 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                 )
                                             ),
                                           ),
+
+                                          _loginUser == '비회원'
+                                              ? Container(
+                                              child: Center(
+                                                  child: Text(
+                                                      "로그인 후 이용할 수 있는 기능입니다.",
+                                                      style: TextStyle(
+                                                        fontFamily: 'dream3',
+                                                        fontSize: screenWidth * 0.05,
+                                                        letterSpacing: -2,
+                                                        color: Colors.black,
+                                                      )
+                                                  )
+                                              )
+                                          )
+                                              : Container()
                                         ]
 
                                             + List.generate(_myComment.length, (index) {
