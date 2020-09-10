@@ -371,41 +371,41 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
 
-                          Padding(
-                            padding: EdgeInsets.all(screenWidth * 0.02),
-                          ),
-
-                          RawMaterialButton(
-                            onPressed: () async {
-                              // save dummy user data in sharedPreferences
-                              final prefs = await SharedPreferences.getInstance();
-                              prefs.setString('apple', '비회원');
-
-                              Navigator.of(context).pushReplacementNamed("/tab");
-                            },
-                            child: SizedBox(
-                              width: screenWidth * 0.8,
-                              height: screenWidth * 0.8 * (49 / 300),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: btncolor,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "비회원으로 이용하기",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontFamily: 'dream3',
-                                        fontSize: screenWidth * 0.04,
-                                        letterSpacing: -1,
-                                        color: Colors.white
-                                    ),
-                                  )
-                                )
-                              )
-                            )
-                          ),
+//                          Padding(
+//                            padding: EdgeInsets.all(screenWidth * 0.02),
+//                          ),
+//
+//                          RawMaterialButton(
+//                            onPressed: () async {
+//                              // save dummy user data in sharedPreferences
+//                              final prefs = await SharedPreferences.getInstance();
+//                              prefs.setString('apple', '비회원');
+//
+//                              Navigator.of(context).pushReplacementNamed("/tab");
+//                            },
+//                            child: SizedBox(
+//                              width: screenWidth * 0.8,
+//                              height: screenWidth * 0.8 * (49 / 300),
+//                              child: Container(
+//                                decoration: BoxDecoration(
+//                                  borderRadius: BorderRadius.circular(5),
+//                                  color: btncolor,
+//                                ),
+//                                child: Center(
+//                                  child: Text(
+//                                    "비회원으로 이용하기",
+//                                    textAlign: TextAlign.center,
+//                                    style: TextStyle(
+//                                        fontFamily: 'dream3',
+//                                        fontSize: screenWidth * 0.04,
+//                                        letterSpacing: -1,
+//                                        color: Colors.white
+//                                    ),
+//                                  )
+//                                )
+//                              )
+//                            )
+//                          ),
 
                           // private policy agree
                           Container(
