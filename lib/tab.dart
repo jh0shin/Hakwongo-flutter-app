@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hwgo/tab/tab_recent.dart';
 import 'package:hwgo/tab/tab_main.dart';
 import 'package:hwgo/tab/tab_mypage.dart';
-import 'package:hwgo/tab/tab_service.dart';
 
 import 'package:hwgo/settings.dart';
 
@@ -19,7 +18,6 @@ class _TabPageState extends State<TabPage> {
   List _pages = [
     TabMainPage(),
     RecentPage(),
-    ServicePage(),
     MyInfoPage()
   ];
 
@@ -73,18 +71,6 @@ class _TabPageState extends State<TabPage> {
                 color: Colors.black,
               )
             )
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart, size: screenWidth * 0.05),
-              title: Text(
-                  '서비스',
-                  style: TextStyle(
-                    fontFamily: 'dream5',
-                    fontSize: screenWidth * 0.035,
-                    letterSpacing: -1,
-                    color: Colors.black,
-                  )
-              )
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle, size: screenWidth * 0.05),
