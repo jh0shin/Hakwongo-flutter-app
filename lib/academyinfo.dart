@@ -6,6 +6,7 @@ import 'package:hwgo/academycomment.dart';
 
 // user info bloc
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'bloc/userbloc.dart';
 
 // rest api request
@@ -67,6 +68,9 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
 
   // already bookmarked?
   bool _isBookmarked = false;
+
+  // user info
+  SharedPreferences _pref;
 
   // init textfield controller
   TextEditingController _controller = TextEditingController();
@@ -317,17 +321,21 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
 
   // change bookmark status
   void _changeBookmark() async {
-    final response = await http.post(
-      'https://hakwongo.com:2052/api2/bookmark/mark',
-      body: {
-        'type' : _isBookmarked ? 'delete' : 'add',
-        'user' : _currentUser,
-        'id' : widget._currentAcademy.id.toString(),
-      }
-    );
-    setState(() {
-      _isBookmarked = !_isBookmarked;
-    });
+    if (_currentUser == '비회원') {
+      _nonmemberAlert();
+    } else {
+      final response = await http.post(
+          'https://hakwongo.com:2052/api2/bookmark/mark',
+          body: {
+            'type' : _isBookmarked ? 'delete' : 'add',
+            'user' : _currentUser,
+            'id' : widget._currentAcademy.id.toString(),
+          }
+      );
+      setState(() {
+        _isBookmarked = !_isBookmarked;
+      });
+    }
   }
 
 
@@ -383,179 +391,184 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
     // hide soft keyboard
     FocusScope.of(context).requestFocus(new FocusNode());
 
-    if (_commentInput == '') {
-      showDialog(
-          context: context,
-          barrierDismissible: true,
-          builder: (BuildContext context) {
-            double screenWidth = MediaQuery.of(context).size.width;
-
-            return Center(
-                child: SizedBox(
-                  width: screenWidth * 0.7,
-                  height: screenWidth * 0.4,
-                  child: Container(
-                      padding: EdgeInsets.all(screenWidth * 0.02),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          // space
-                          SizedBox(height: screenWidth * 0.08),
-
-                          // guide text
-                          Material(
-                              child: Container(
-                                  color: Colors.white,
-                                  child: Text(
-                                      "댓글을 입력해주세요.",
-                                      style: TextStyle(
-                                          fontFamily: 'dream4',
-                                          fontSize: screenWidth * 0.05,
-                                          letterSpacing: -2,
-                                          color: Colors.black
-                                      )
-                                  )
-                              )
-                          ),
-
-                          // space
-                          SizedBox(height: screenWidth * 0.08),
-
-                          // button
-                          // call
-                          RawMaterialButton(
-                            onPressed: (){
-                              // TODO : create calling method
-                              Navigator.pop(context);
-                            },
-                            child: SizedBox(
-                              width: screenWidth * 0.325,
-                              height: screenWidth * 0.1,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                                  color: bgcolor,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                      "확인",
-                                      style: TextStyle(
-                                          fontFamily: 'dream4',
-                                          fontSize: screenWidth * 0.05,
-                                          letterSpacing: -2,
-                                          color: Colors.white
-                                      )
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                  ),
-                )
-            );
-          }
-      );
+    if (_currentUser == '비회원') {
+      _nonmemberAlert();
     } else {
-      await http.post(
-          'https://hakwongo.com:2052/api2/comment/post',
-          body: {
-            'id' : widget._currentAcademy.id.toString(),
-            'user' : _currentUser,
-            'time' : DateTime.now().toString().split('.')[0],
-            'comment' : _commentInput,
-          }
-      );
-      setState(() {
-        _getComment();
-        _getCommentNum();
-      });
+      if (_commentInput == '') {
+        showDialog(
+            context: context,
+            barrierDismissible: true,
+            builder: (BuildContext context) {
+              double screenWidth = MediaQuery.of(context).size.width;
 
-      _controller.clear();
-      
-      // complete dialog
-      showDialog(
-          context: context,
-          barrierDismissible: true,
-          builder: (BuildContext context) {
-            double screenWidth = MediaQuery.of(context).size.width;
+              return Center(
+                  child: SizedBox(
+                    width: screenWidth * 0.7,
+                    height: screenWidth * 0.4,
+                    child: Container(
+                        padding: EdgeInsets.all(screenWidth * 0.02),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            // space
+                            SizedBox(height: screenWidth * 0.08),
 
-            return Center(
-                child: SizedBox(
-                  width: screenWidth * 0.7,
-                  height: screenWidth * 0.4,
-                  child: Container(
-                      padding: EdgeInsets.all(screenWidth * 0.02),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          // space
-                          SizedBox(height: screenWidth * 0.08),
+                            // guide text
+                            Material(
+                                child: Container(
+                                    color: Colors.white,
+                                    child: Text(
+                                        "댓글을 입력해주세요.",
+                                        style: TextStyle(
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.05,
+                                            letterSpacing: -2,
+                                            color: Colors.black
+                                        )
+                                    )
+                                )
+                            ),
 
-                          // guide text
-                          Material(
-                              child: Container(
-                                  color: Colors.white,
-                                  child: Text(
-                                      "댓글이 등록되었습니다.",
-                                      style: TextStyle(
-                                          fontFamily: 'dream4',
-                                          fontSize: screenWidth * 0.05,
-                                          letterSpacing: -2,
-                                          color: Colors.black
-                                      )
-                                  )
-                              )
-                          ),
+                            // space
+                            SizedBox(height: screenWidth * 0.08),
 
-                          // space
-                          SizedBox(height: screenWidth * 0.08),
-
-                          // button
-                          // call
-                          RawMaterialButton(
-                            onPressed: (){
-                              // TODO : create calling method
-                              Navigator.pop(context);
-                            },
-                            child: SizedBox(
-                              width: screenWidth * 0.325,
-                              height: screenWidth * 0.1,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                                  color: bgcolor,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                      "확인",
-                                      style: TextStyle(
-                                          fontFamily: 'dream4',
-                                          fontSize: screenWidth * 0.05,
-                                          letterSpacing: -2,
-                                          color: Colors.white
-                                      )
+                            // button
+                            // call
+                            RawMaterialButton(
+                              onPressed: (){
+                                // TODO : create calling method
+                                Navigator.pop(context);
+                              },
+                              child: SizedBox(
+                                width: screenWidth * 0.325,
+                                height: screenWidth * 0.1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    color: bgcolor,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                        "확인",
+                                        style: TextStyle(
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.05,
+                                            letterSpacing: -2,
+                                            color: Colors.white
+                                        )
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                  ),
-                )
-            );
-          }
-      );
+                          ],
+                        )
+                    ),
+                  )
+              );
+            }
+        );
+      }
+      else {
+        await http.post(
+            'https://hakwongo.com:2052/api2/comment/post',
+            body: {
+              'id' : widget._currentAcademy.id.toString(),
+              'user' : _currentUser,
+              'time' : DateTime.now().toString().split('.')[0],
+              'comment' : _commentInput,
+            }
+        );
+        setState(() {
+          _getComment();
+          _getCommentNum();
+        });
+
+        _controller.clear();
+
+        // complete dialog
+        showDialog(
+            context: context,
+            barrierDismissible: true,
+            builder: (BuildContext context) {
+              double screenWidth = MediaQuery.of(context).size.width;
+
+              return Center(
+                  child: SizedBox(
+                    width: screenWidth * 0.7,
+                    height: screenWidth * 0.4,
+                    child: Container(
+                        padding: EdgeInsets.all(screenWidth * 0.02),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            // space
+                            SizedBox(height: screenWidth * 0.08),
+
+                            // guide text
+                            Material(
+                                child: Container(
+                                    color: Colors.white,
+                                    child: Text(
+                                        "댓글이 등록되었습니다.",
+                                        style: TextStyle(
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.05,
+                                            letterSpacing: -2,
+                                            color: Colors.black
+                                        )
+                                    )
+                                )
+                            ),
+
+                            // space
+                            SizedBox(height: screenWidth * 0.08),
+
+                            // button
+                            // call
+                            RawMaterialButton(
+                              onPressed: (){
+                                // TODO : create calling method
+                                Navigator.pop(context);
+                              },
+                              child: SizedBox(
+                                width: screenWidth * 0.325,
+                                height: screenWidth * 0.1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    color: bgcolor,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                        "확인",
+                                        style: TextStyle(
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.05,
+                                            letterSpacing: -2,
+                                            color: Colors.white
+                                        )
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                    ),
+                  )
+              );
+            }
+        );
+      }
     }    
   }
 
@@ -785,12 +798,143 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
     );
   }
 
+  // non-member login alert
+  void _nonmemberAlert() {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          double screenWidth = MediaQuery.of(context).size.width;
+
+          return Center(
+              child: SizedBox(
+                width: screenWidth * 0.7,
+                height: screenWidth * 0.5,
+                child: Container(
+                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        // space
+                        SizedBox(height: screenWidth * 0.1),
+
+                        // phone number
+                        Material(
+                            child: Container(
+                                color: Colors.white,
+                                child: Text(
+                                  '로그인 후 사용가능한 기능입니다.\n로그인하시겠습니까?',
+                                  style: TextStyle(
+                                    fontFamily: 'dream3',
+                                    fontSize: screenWidth * 0.05,
+                                    letterSpacing: -1,
+                                    color: Colors.black,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                )
+                            )
+                        ),
+
+                        // space
+                        SizedBox(height: screenWidth * 0.1),
+
+                        // button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            // call
+                            RawMaterialButton(
+                              onPressed: (){
+                                Navigator.of(context).pushReplacementNamed("/login");
+                              },
+                              child: SizedBox(
+                                width: screenWidth * 0.325,
+                                height: screenWidth * 0.1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    color: bgcolor,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                        "로그인",
+                                        style: TextStyle(
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.05,
+                                            letterSpacing: -2,
+                                            color: Colors.white
+                                        )
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // back
+                            RawMaterialButton(
+                              onPressed: (){
+                                Navigator.pop(context);
+                              },
+                              child: SizedBox(
+                                width: screenWidth * 0.325,
+                                height: screenWidth * 0.1,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                                    color: Colors.black45,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                        "취소",
+                                        style: TextStyle(
+                                            fontFamily: 'dream4',
+                                            fontSize: screenWidth * 0.05,
+                                            letterSpacing: -2,
+                                            color: Colors.white
+                                        )
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ],
+                    )
+                ),
+              )
+          );
+        }
+    );
+  }
+
+  // check User
+  void _checkUser () async {
+    _pref = await SharedPreferences.getInstance();
+    try {
+      _currentUser = BlocProvider.of<UserBloc>(context).currentState.toString()
+          .split(",")[0].split(": ")[1];
+    } catch(e) {
+      _currentUser = '비회원';
+    }
+
+    _checkBookmark();
+
+    print(_currentUser);
+  }
+
   @override
   void initState() {
     super.initState();
 
     DBHelper().createData(widget._currentAcademy);
 
+    _checkUser();
     _getClassInfo();
     _getComment();
     _getCommentNum();
@@ -810,14 +954,6 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   Widget build(BuildContext context) => BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         double screenWidth = MediaQuery.of(context).size.width;
-
-        if (state is UserFetched) {
-          if (_currentUser == null) {
-            _currentUser = state.user.id.toString();
-            _checkBookmark();
-          }
-          _currentUser = state.user.id.toString();
-        }
 
         // back button handler
         // ignore: missing_return
@@ -985,6 +1121,19 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                         ),
                                       )
                                     ),
+                                  ),
+
+                                  // guide text
+                                  Center(
+                                      child: Text(
+                                        "지도 이미지를 클릭하면 지도 앱에서 확인할 수 있습니다.",
+                                        style: TextStyle(
+                                          fontFamily: 'dream5',
+                                          fontSize: screenWidth * 0.038,
+                                          letterSpacing: -2,
+                                          color: Colors.black38,
+                                        ),
+                                      )
                                   ),
 
                                   // location info

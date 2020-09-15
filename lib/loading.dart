@@ -51,6 +51,27 @@ class _LoadingPageState extends State<LoadingPage> {
         // access token exists
         Navigator.of(context).pushReplacementNamed("/tab");
       }
+
+      Navigator.of(context).pushReplacementNamed("/tab");
+
+//    Timer(Duration(seconds: 1), () async {
+//      // check if kakao login token exists
+//      if (token.refreshToken == null) {
+//        // check if apple login token exists
+//        final prefs = await SharedPreferences.getInstance();
+//        final appleUser = prefs.getString('apple') ?? '';
+//        print(appleUser);
+//
+//        if (appleUser == '') {
+//          // no access token exists
+//          Navigator.of(context).pushReplacementNamed("/login");
+//        }
+//
+//        else Navigator.of(context).pushReplacementNamed("/tab");
+//      } else {
+//        // access token exists
+//        Navigator.of(context).pushReplacementNamed("/tab");
+//      }
     });
   }
 
