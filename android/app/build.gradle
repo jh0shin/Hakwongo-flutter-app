@@ -61,7 +61,7 @@ android {
 //        }
 //    }
 
-     for release
+    // for release
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
