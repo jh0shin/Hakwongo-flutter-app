@@ -306,25 +306,26 @@ class _LoginPageState extends State<LoginPage> {
                             height: screenWidth * 0.8 * (49 / 300),
                             child: SignInWithAppleButton(
                                 onPressed: () async {
-                                  final credential = await SignInWithApple.getAppleIDCredential(
-                                    scopes: [
-                                      AppleIDAuthorizationScopes.email,
-                                      AppleIDAuthorizationScopes.fullName,
-                                    ],
-                                    webAuthenticationOptions: WebAuthenticationOptions(
-                                      // TODO : set items from apple developer portal
-                                      clientId: 'com.service.hakwongo', // services id
-                                      redirectUri: Uri.parse('https://hakwongo.com:2052/auth/callbacks/sign_in_with_apple'),
-                                    ),
-                                    // TODO : Remove these if no need for them
-                                    nonce: 'example-nonce',
-                                    state: 'example-state',
-                                  );
+                                  if (_isPolicyChecked == true) {
+                                    final credential = await SignInWithApple.getAppleIDCredential(
+                                      scopes: [
+                                        AppleIDAuthorizationScopes.email,
+                                        AppleIDAuthorizationScopes.fullName,
+                                      ],
+                                      webAuthenticationOptions: WebAuthenticationOptions(
+                                        // TODO : set items from apple developer portal
+                                        clientId: 'com.service.hakwongo', // services id
+                                        redirectUri: Uri.parse('https://hakwongo.com:2052/auth/callbacks/sign_in_with_apple'),
+                                      ),
+                                      // TODO : Remove these if no need for them
+                                      nonce: 'example-nonce',
+                                      state: 'example-state',
+                                    );
 
-                                  print(credential);
+                                    print(credential);
 
-                                  // This is the endpoint that will convert an authorization code obtained
-                                  // via Sign in with Apple into a session in your system
+                                    // This is the endpoint that will convert an authorization code obtained
+                                    // via Sign in with Apple into a session in your system
 //                                  final signInWithAppleEndpoint = Uri(
 ////                                    scheme: 'http',
 ////                                    host: 'www.hakwongo.com',
@@ -339,30 +340,34 @@ class _LoginPageState extends State<LoginPage> {
 ////                                      'state': credential.state
 ////                                    },
 ////                                  );
-                                  final signInWithAppleEndpoint = Uri.encodeFull(
-                                    "https://hakwongo.com:2052/auth/sign_in_with_apple?"
-                                        + "code=" + credential.authorizationCode.toString()
-                                        + "&firstName=" + credential.givenName.toString()
-                                        + "&lastName=" + credential.familyName.toString()
-                                        + "&useBundleId=" + (Platform.isIOS || Platform.isMacOS ? 'true' : 'false')
-                                        + "&state=" + credential.state.toString()
-                                  );
+                                    final signInWithAppleEndpoint = Uri.encodeFull(
+                                        "https://hakwongo.com:2052/auth/sign_in_with_apple?"
+                                            + "code=" + credential.authorizationCode.toString()
+                                            + "&firstName=" + credential.givenName.toString()
+                                            + "&lastName=" + credential.familyName.toString()
+                                            + "&useBundleId=" + (Platform.isIOS || Platform.isMacOS ? 'true' : 'false')
+                                            + "&state=" + credential.state.toString()
+                                    );
 
-                                  print(signInWithAppleEndpoint);
+                                    print(signInWithAppleEndpoint);
 
-                                  final session = await http.Client().post(
-                                    signInWithAppleEndpoint,
-                                  );
+                                    final session = await http.Client().post(
+                                      signInWithAppleEndpoint,
+                                    );
 
-                                  // If we got this far, a session based on the Apple ID credential has been created in your system,
-                                  // and you can now set this as the app's session
-                                  print(jsonDecode(session.body)["sessionId"].toString().split(" ")[4]);
+                                    // If we got this far, a session based on the Apple ID credential has been created in your system,
+                                    // and you can now set this as the app's session
+                                    print(jsonDecode(session.body)["sessionId"].toString().split(" ")[4]);
 
-                                  // TODO : save credential data in device and navigate to main page
-                                  final prefs = await SharedPreferences.getInstance();
-                                  prefs.setString('apple', jsonDecode(session.body)["sessionId"].toString().split(" ")[4]);
+                                    // TODO : save credential data in device and navigate to main page
+                                    final prefs = await SharedPreferences.getInstance();
+                                    prefs.setString('apple', jsonDecode(session.body)["sessionId"].toString().split(" ")[4]);
 
-                                  Navigator.of(context).pushReplacementNamed("/tab");
+                                    Navigator.of(context).pushReplacementNamed("/tab");
+                                  }
+                                  else {
+                                    _policyNotChecked();
+                                  }
                                 }
                             ),
                           ),

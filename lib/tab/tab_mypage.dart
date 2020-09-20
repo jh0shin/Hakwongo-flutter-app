@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:kakao_flutter_sdk/user.dart';
 
 class MyInfoPage extends StatefulWidget {
   @override
@@ -49,56 +50,56 @@ class _MyInfoPageState extends State<MyInfoPage> {
   List<RecentTest> _myTest = [];
   List<RecentTest> _myTestBuffer = [];
 
-  // get user's test
-  void _getMyTest() async {
-    final response = await http.post(
-      'https://hakwongo.com:2052/api2/test/recent',
-      body: {
-        'user' : _loginUser,
-        'limit' : _limit.toString(),
-        'offset' : _testOffset.toString()
-      }
-    );
-
-    print(response.body);
-
-    final List<RecentTest> parsedMyTest = jsonDecode(response.body)
-      .map<RecentTest>((json) => RecentTest.fromJSON(json))
-      .toList();
-    setState(() {
-      _myTest.clear();
-      _myTest.addAll(parsedMyTest);
-    });
-  }
-
-  // get user's more comment
-  void _getMoreMyTest() async {
-    _testOffset += _limit;
-
-    final response = await http.post(
-        'https://hakwongo.com:2052/api2/test/recent',
-        body: {
-          'user' : _loginUser,
-          'limit' : _limit.toString(),
-          'offset' : _testOffset.toString(),
-        }
-    );
-
-    if (response.body == '[]') {
-      setState(() {
-        _myTestBuffer.clear();
-        _isTestLeft = false;
-      });
-    } else {
-      final List<RecentTest> parsedMyTest = jsonDecode(response.body)
-          .map<RecentTest>((json) => RecentTest.fromJSON(json))
-          .toList();
-      setState(() {
-        _myTestBuffer.clear();
-        _myTestBuffer.addAll(parsedMyTest);
-      });
-    }
-  }
+//  // get user's test
+//  void _getMyTest() async {
+//    final response = await http.post(
+//      'https://hakwongo.com:2052/api2/test/recent',
+//      body: {
+//        'user' : _loginUser,
+//        'limit' : _limit.toString(),
+//        'offset' : _testOffset.toString()
+//      }
+//    );
+//
+//    print(response.body);
+//
+//    final List<RecentTest> parsedMyTest = jsonDecode(response.body)
+//      .map<RecentTest>((json) => RecentTest.fromJSON(json))
+//      .toList();
+//    setState(() {
+//      _myTest.clear();
+//      _myTest.addAll(parsedMyTest);
+//    });
+//  }
+//
+//  // get user's more comment
+//  void _getMoreMyTest() async {
+//    _testOffset += _limit;
+//
+//    final response = await http.post(
+//        'https://hakwongo.com:2052/api2/test/recent',
+//        body: {
+//          'user' : _loginUser,
+//          'limit' : _limit.toString(),
+//          'offset' : _testOffset.toString(),
+//        }
+//    );
+//
+//    if (response.body == '[]') {
+//      setState(() {
+//        _myTestBuffer.clear();
+//        _isTestLeft = false;
+//      });
+//    } else {
+//      final List<RecentTest> parsedMyTest = jsonDecode(response.body)
+//          .map<RecentTest>((json) => RecentTest.fromJSON(json))
+//          .toList();
+//      setState(() {
+//        _myTestBuffer.clear();
+//        _myTestBuffer.addAll(parsedMyTest);
+//      });
+//    }
+//  }
 
   // get user's comment
   void _getMyComment() async {
@@ -211,6 +212,9 @@ class _MyInfoPageState extends State<MyInfoPage> {
         'id' : bookmark.id.toString(),
       }
     );
+
+    print(response.body.toString());
+
     final List<AcademyInfo> parsedAcademyInfo = jsonDecode(response.body)
       .map<AcademyInfo>((json) => AcademyInfo.fromJSON(json))
       .toList();
@@ -371,13 +375,10 @@ class _MyInfoPageState extends State<MyInfoPage> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-
-    // _checkUser();
+  void _checkUser () async {
+    _pref = await SharedPreferences.getInstance();
     try {
-      _loginUser = BlocProvider.of<UserBloc>(context).currentState.toString()
+      _loginUser = _pref.getString('apple') ?? BlocProvider.of<UserBloc>(context).currentState.toString()
           .split(",")[0].split(": ")[1];
     } catch(e) {
       _loginUser = '비회원';
@@ -387,8 +388,18 @@ class _MyInfoPageState extends State<MyInfoPage> {
     _getMoreBookmark();
     _getMyComment();
     _getMoreMyComment();
-    _getMyTest();
-    _getMoreMyTest();
+
+    print("loginUser : " + _loginUser);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _checkUser();
+
+//    _getMyTest();
+//    _getMoreMyTest();
   }
   /*
   TODO : 내가 쓴 댓글에서 클릭하여 학원 페이지로 넘어갔다가 댓글 작성 후
@@ -463,11 +474,12 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                             flex: 1,
                                             child: CircleAvatar(
                                               radius: screenWidth * 0.07,
-                                              backgroundImage: _loginUser == '비회원'
-                                                  ? AssetImage("assets/image/logo.png")
-                                                  : (_user.properties.containsKey("profile_image")
-                                                  ? NetworkImage(_user.properties["profile_image"])
-                                                  : AssetImage("assets/image/logo.png")),
+                                              backgroundImage: AssetImage("assets/image/logo.png")
+//                                              backgroundImage: (_loginUser == '비회원' || _pref.containsKey('apple'))
+//                                                  ? AssetImage("assets/image/logo.png")
+//                                                  : (_user.properties.containsKey("profile_image")
+//                                                    ? NetworkImage(_user.properties["profile_image"])
+//                                                    : AssetImage("assets/image/logo.png")),
                                             ),
                                           ),
 
@@ -477,9 +489,10 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                               child: Container(
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
-                                                    _loginUser == '비회원'
-                                                        ? '비회원'
-                                                        : _user.properties["nickname"],
+                                                  _loginUser,
+//                                                    _loginUser == '비회원'
+//                                                        ? '비회원'
+//                                                        : _user.properties["nickname"],
                                                     style: TextStyle(
                                                       fontFamily: 'dream3',
                                                       fontSize: screenWidth * 0.05,
@@ -521,6 +534,7 @@ class _MyInfoPageState extends State<MyInfoPage> {
                                                   : RawMaterialButton(
                                                   onPressed: (){
                                                     bloc.dispatch(UserLogOut());
+                                                    _pref.clear();
                                                     Navigator.of(context).pushReplacementNamed("/");
                                                   },
                                                   child: Container(

@@ -830,7 +830,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
                                   '로그인 후 사용가능한 기능입니다.\n로그인하시겠습니까?',
                                   style: TextStyle(
                                     fontFamily: 'dream3',
-                                    fontSize: screenWidth * 0.05,
+                                    fontSize: screenWidth * 0.04,
                                     letterSpacing: -1,
                                     color: Colors.black,
                                   ),
@@ -917,7 +917,7 @@ class _AcademyInfoPageState extends State<AcademyInfoPage> {
   void _checkUser () async {
     _pref = await SharedPreferences.getInstance();
     try {
-      _currentUser = BlocProvider.of<UserBloc>(context).currentState.toString()
+      _currentUser = _pref.getString('apple') ?? BlocProvider.of<UserBloc>(context).currentState.toString()
           .split(",")[0].split(": ")[1];
     } catch(e) {
       _currentUser = '비회원';
