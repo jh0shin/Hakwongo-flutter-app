@@ -389,6 +389,10 @@ class _MyInfoPageState extends State<MyInfoPage> {
     _getMyComment();
     _getMoreMyComment();
 
+    setState(() {
+      
+    });
+
     print("loginUser : " + _loginUser);
   }
 

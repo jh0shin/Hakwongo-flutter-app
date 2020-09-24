@@ -716,60 +716,60 @@ class _TabMainPageState extends State<TabMainPage> {
                             height: screenWidth * 0.4 * (1462 / 1924),
                           ),
 
-                          // carousel ad card
-                          SizedBox(
-                            width: screenWidth,
-                            height: screenWidth * 0.4,
-                            child: Container(
-                                padding: EdgeInsets.all(screenWidth * 0.02),
-                                child: Stack(
-                                  children: <Widget>[
-                                    CarouselSlider(
-                                      height: screenWidth * 0.4,
-                                      autoPlay: true,
-                                      viewportFraction: 1.0,
-                                      onPageChanged: (index) {
-                                        setState(() {
-                                          _currentBanner = index;
-                                        });
-                                      },
-                                      items: _banner.map(
-                                              (i) {
-                                            return Container(
-                                              color: bgcolor,
-                                              padding: EdgeInsets.all(10),
-                                              child: Image.asset(i),
-                                            );
-                                          }
-                                      ).toList(),
-                                    ),
-
-                                    // indicate dot
-                                    Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      right: 0,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: List.generate(_banner.length, (index) {
-                                          return Container(
-                                            width: screenWidth * 0.01,
-                                            height: screenWidth * 0.01,
-                                            margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01, horizontal: screenWidth * 0.01),
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: _currentBanner == index
-                                                  ? Color.fromRGBO(255, 255, 255, 0.9)
-                                                  : Color.fromRGBO(255, 255, 255, 0.4),
-                                            ),
-                                          );
-                                        }),
-                                      ),
-                                    )
-                                  ],
-                                )
-                            ),
-                          ),
+//                          // carousel ad card
+//                          SizedBox(
+//                            width: screenWidth,
+//                            height: screenWidth * 0.4,
+//                            child: Container(
+//                                padding: EdgeInsets.all(screenWidth * 0.02),
+//                                child: Stack(
+//                                  children: <Widget>[
+//                                    CarouselSlider(
+//                                      height: screenWidth * 0.4,
+//                                      autoPlay: true,
+//                                      viewportFraction: 1.0,
+//                                      onPageChanged: (index) {
+//                                        setState(() {
+//                                          _currentBanner = index;
+//                                        });
+//                                      },
+//                                      items: _banner.map(
+//                                              (i) {
+//                                            return Container(
+//                                              color: bgcolor,
+//                                              padding: EdgeInsets.all(10),
+//                                              child: Image.asset(i),
+//                                            );
+//                                          }
+//                                      ).toList(),
+//                                    ),
+//
+//                                    // indicate dot
+//                                    Positioned(
+//                                      bottom: 0,
+//                                      left: 0,
+//                                      right: 0,
+//                                      child: Row(
+//                                        mainAxisAlignment: MainAxisAlignment.center,
+//                                        children: List.generate(_banner.length, (index) {
+//                                          return Container(
+//                                            width: screenWidth * 0.01,
+//                                            height: screenWidth * 0.01,
+//                                            margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01, horizontal: screenWidth * 0.01),
+//                                            decoration: BoxDecoration(
+//                                              shape: BoxShape.circle,
+//                                              color: _currentBanner == index
+//                                                  ? Color.fromRGBO(255, 255, 255, 0.9)
+//                                                  : Color.fromRGBO(255, 255, 255, 0.4),
+//                                            ),
+//                                          );
+//                                        }),
+//                                      ),
+//                                    )
+//                                  ],
+//                                )
+//                            ),
+//                          ),
 
                           // location select
                           RawMaterialButton(
